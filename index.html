@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sicily 2026 — George & A.</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --mint: #A8D5C2;
+  --mint-light: #D4EDE4;
+  --mint-pale: #EAF6F1;
+  --mint-deep: #5BAF92;
+  --mint-dark: #2E7D62;
+  --sage: #7BA99A;
+  --sage-light: #B8D4CC;
+  --green-ink: #1A3A2E;
+  --green-mid: #2D6B52;
+  --accent: #E8A87C;
+  --accent-light: #F5D4B8;
+  --cream: #F8FAF8;
+  --white: #FFFFFF;
+  --stone: #6B7B72;
+  --light-border: rgba(91,175,146,0.2);
+  --card-bg: rgba(255,255,255,0.85);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body { background:var(--cream); color:var(--green-ink); font-family:'DM Sans',sans-serif; font-weight:300; line-height:1.7; overflow-x:hidden; }
+
+/* ── HERO ── */
+.hero {
+  position:relative; min-height:100vh; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; overflow:hidden;
+  background: linear-gradient(155deg, #0D2420 0%, #1A3A2E 40%, #0F2E28 70%, #0A1E1A 100%);
+}
+.hero-bg {
+  position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 85%, rgba(91,175,146,0.2) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 85% 15%, rgba(168,213,194,0.15) 0%, transparent 60%),
+    radial-gradient(ellipse 80% 40% at 50% 50%, rgba(232,168,124,0.06) 0%, transparent 70%);
+}
+.hero-rings {
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:600px; height:600px;
+}
+.hero-rings circle { fill:none; }
+.hero-ring1 { stroke:rgba(168,213,194,0.08); stroke-width:1; animation: ringRotate 40s linear infinite; transform-origin:50% 50%; }
+.hero-ring2 { stroke:rgba(91,175,146,0.12); stroke-width:0.5; animation: ringRotate 60s linear infinite reverse; transform-origin:50% 50%; }
+@keyframes ringRotate { to { transform: rotate(360deg); } }
+.hero-content { position:relative; z-index:2; text-align:center; padding:2rem; }
+.hero-tag {
+  font-family:'DM Sans',sans-serif; font-weight:400; letter-spacing:0.5em;
+  font-size:0.65rem; color:var(--mint); text-transform:uppercase; margin-bottom:1.5rem;
+  opacity:0; animation: fadeUp 1s 0.3s forwards;
+}
+.hero-title {
+  font-family:'Cinzel',serif; font-size:clamp(3.5rem,9vw,7.5rem); font-weight:600;
+  color:var(--white); letter-spacing:0.06em; line-height:0.9;
+  opacity:0; animation: fadeUp 1s 0.5s forwards;
+}
+.hero-title em {
+  display:block; font-family:'Playfair Display',serif; font-style:italic;
+  font-weight:400; font-size:clamp(1.6rem,4vw,3.2rem); color:var(--mint);
+  letter-spacing:0.08em; margin-top:0.6rem;
+}
+.hero-divider {
+  width:60px; height:1px;
+  background:linear-gradient(90deg,transparent,var(--mint-deep),transparent);
+  margin:2rem auto; opacity:0; animation: fadeUp 1s 0.9s forwards;
+}
+.hero-meta {
+  display:flex; gap:2.5rem; justify-content:center; flex-wrap:wrap;
+  opacity:0; animation: fadeUp 1s 1.1s forwards;
+}
+.hero-meta-item { text-align:center; }
+.hero-meta-num { font-family:'Cinzel',serif; font-size:1.8rem; color:var(--mint); display:block; line-height:1; }
+.hero-meta-label { font-size:0.6rem; letter-spacing:0.35em; text-transform:uppercase; color:rgba(255,255,255,0.35); }
+.hero-flights {
+  margin-top:2.5rem; display:flex; gap:1.5rem; justify-content:center; flex-wrap:wrap;
+  opacity:0; animation: fadeUp 1s 1.3s forwards;
+}
+.flight-badge {
+  background:rgba(168,213,194,0.1); border:1px solid rgba(168,213,194,0.25);
+  padding:0.6rem 1.2rem; border-radius:40px;
+  font-size:0.72rem; color:rgba(255,255,255,0.7); letter-spacing:0.05em;
+}
+.flight-badge strong { color:var(--mint); }
+.scroll-hint {
+  position:absolute; bottom:2rem; left:50%; transform:translateX(-50%);
+  font-size:0.6rem; letter-spacing:0.4em; text-transform:uppercase;
+  color:rgba(255,255,255,0.25); animation: pulse 2.5s ease-in-out infinite;
+}
+@keyframes fadeUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+@keyframes pulse { 0%,100%{opacity:0.25} 50%{opacity:0.7} }
+
+/* ── NAV TABS ── */
+.nav-tabs {
+  position:sticky; top:0; z-index:100;
+  background:rgba(248,250,248,0.95); backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--light-border);
+  display:flex; justify-content:center; gap:0; overflow-x:auto;
+  padding:0 1rem;
+}
+.nav-tab {
+  padding:0.9rem 1.2rem; font-size:0.7rem; letter-spacing:0.2em;
+  text-transform:uppercase; color:var(--stone); cursor:pointer;
+  border-bottom:2px solid transparent; transition:all 0.2s;
+  white-space:nowrap; font-weight:500; background:none; border-top:none;
+  border-left:none; border-right:none;
+}
+.nav-tab:hover { color:var(--mint-dark); }
+.nav-tab.active { color:var(--mint-dark); border-bottom-color:var(--mint-deep); }
+
+/* ── SECTIONS ── */
+.section { max-width:1100px; margin:0 auto; padding:4rem 1.5rem; }
+.section-header { margin-bottom:3rem; }
+.section-tag {
+  font-size:0.62rem; letter-spacing:0.4em; text-transform:uppercase;
+  color:var(--mint-deep); margin-bottom:0.5rem; display:block; font-weight:500;
+}
+.section-title {
+  font-family:'Playfair Display',serif; font-size:clamp(1.8rem,4vw,2.8rem);
+  color:var(--green-ink); font-weight:600; line-height:1.2;
+}
+.section-rule {
+  width:50px; height:2px; background:var(--mint-deep); margin-top:1rem;
+  border-radius:2px;
+}
+
+/* ── HOTEL CARDS ── */
+.hotels-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1rem; }
+.hotel-card {
+  background:var(--white); border:1px solid var(--light-border);
+  border-radius:12px; padding:1.6rem; position:relative; overflow:hidden;
+  transition:transform 0.2s, box-shadow 0.2s;
+}
+.hotel-card:hover { transform:translateY(-3px); box-shadow:0 8px 30px rgba(91,175,146,0.15); }
+.hotel-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  background:linear-gradient(90deg,var(--mint-deep),var(--mint));
+}
+.hotel-num { font-family:'Cinzel',serif; font-size:2rem; color:var(--mint-light); line-height:1; margin-bottom:0.3rem; }
+.hotel-city { font-family:'Playfair Display',serif; font-size:1.1rem; font-weight:600; color:var(--green-ink); }
+.hotel-dates { font-size:0.65rem; letter-spacing:0.25em; text-transform:uppercase; color:var(--mint-deep); margin:0.3rem 0 0.7rem; font-weight:500; }
+.hotel-nights { font-size:0.8rem; color:var(--stone); }
+.hotel-tip { margin-top:0.8rem; font-size:0.78rem; color:var(--stone); line-height:1.55; padding-top:0.8rem; border-top:1px solid var(--mint-pale); }
+
+/* ── MAP ── */
+.map-section { background:var(--green-ink); padding:4rem 0; }
+.map-wrap { max-width:1100px; margin:0 auto; padding:0 1.5rem; }
+.map-section .section-title { color:var(--mint-light); }
+.map-section .section-tag { color:var(--mint); }
+.map-section .section-rule { background:var(--mint); }
+#sicily-map { width:100%; height:auto; display:block; margin-top:1.5rem; border-radius:12px; overflow:hidden; }
+.map-legend { display:flex; flex-wrap:wrap; gap:6px; margin-top:1rem; }
+.map-leg {
+  display:flex; align-items:center; gap:5px; font-size:11px; color:rgba(255,255,255,0.6);
+  cursor:pointer; padding:4px 10px; border-radius:20px;
+  border:0.5px solid rgba(168,213,194,0.2); background:rgba(168,213,194,0.05);
+  transition:all 0.15s; user-select:none;
+}
+.map-leg:hover,.map-leg.on { background:rgba(168,213,194,0.15); border-color:rgba(168,213,194,0.4); color:rgba(255,255,255,0.9); }
+.map-leg-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.map-info {
+  margin-top:8px; padding:10px 14px;
+  background:rgba(168,213,194,0.08); border:0.5px solid rgba(168,213,194,0.2);
+  border-radius:8px; font-size:12px; color:rgba(255,255,255,0.6); min-height:36px; line-height:1.6;
+}
+.map-info strong { color:var(--mint); font-size:13px; }
+
+/* ── DAY CARDS ── */
+.days-list { display:flex; flex-direction:column; gap:1.5rem; }
+.day-card {
+  background:var(--white); border:1px solid var(--light-border); border-radius:16px;
+  overflow:hidden; transition:box-shadow 0.2s;
+}
+.day-card:hover { box-shadow:0 6px 30px rgba(91,175,146,0.12); }
+.day-header {
+  display:grid; grid-template-columns:90px 1fr;
+  cursor:pointer; user-select:none;
+}
+.day-num-col {
+  background:linear-gradient(160deg,var(--mint-deep),var(--mint-dark));
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:1.5rem 0.5rem; gap:0.2rem;
+}
+.day-num { font-family:'Cinzel',serif; font-size:2rem; color:var(--white); line-height:1; }
+.day-word { font-size:0.55rem; letter-spacing:0.3em; text-transform:uppercase; color:rgba(255,255,255,0.6); }
+.day-badge {
+  margin-top:0.5rem; background:rgba(255,255,255,0.15); color:rgba(255,255,255,0.9);
+  font-size:0.5rem; letter-spacing:0.15em; text-transform:uppercase;
+  padding:0.2rem 0.5rem; border-radius:10px; text-align:center;
+}
+.day-summary {
+  padding:1.5rem 1.8rem; display:flex; flex-direction:column; justify-content:center; gap:0.4rem;
+}
+.day-date { font-size:0.65rem; letter-spacing:0.3em; text-transform:uppercase; color:var(--mint-deep); font-weight:500; }
+.day-title { font-family:'Playfair Display',serif; font-size:clamp(1.1rem,2.5vw,1.5rem); color:var(--green-ink); font-weight:600; }
+.day-quick {
+  display:flex; gap:1rem; flex-wrap:wrap; margin-top:0.3rem;
+}
+.day-quick-item {
+  display:flex; align-items:center; gap:0.3rem;
+  font-size:0.72rem; color:var(--stone);
+}
+.day-expand-icon {
+  margin-left:auto; color:var(--mint-deep); font-size:1.2rem; align-self:center;
+  transition:transform 0.3s; flex-shrink:0; padding-right:1.5rem;
+}
+.day-card.open .day-expand-icon { transform:rotate(180deg); }
+
+/* Day body */
+.day-body { display:none; border-top:1px solid var(--mint-pale); }
+.day-card.open .day-body { display:block; }
+.day-body-inner { padding:1.8rem; display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
+@media(max-width:650px){ .day-body-inner { grid-template-columns:1fr; } }
+
+.time-block { margin-bottom:1rem; }
+.time-label {
+  font-size:0.6rem; letter-spacing:0.3em; text-transform:uppercase;
+  font-weight:600; padding:0.2rem 0.7rem; border-radius:20px; display:inline-block;
+  margin-bottom:0.5rem;
+}
+.time-label.morning { background:var(--mint-pale); color:var(--mint-dark); }
+.time-label.afternoon { background:#EAF0F6; color:#2A5A7A; }
+.time-label.evening { background:var(--green-ink); color:var(--mint); }
+.time-label.drive { background:var(--accent-light); color:#8B4A1A; }
+.time-text { font-size:0.88rem; color:#3A4A42; line-height:1.65; }
+.time-text strong { color:var(--green-ink); font-weight:500; }
+
+/* Notes */
+.local-note {
+  margin-top:1rem; padding:0.9rem 1.1rem;
+  background:#FFFBF0; border-left:3px solid var(--accent);
+  border-radius:0 8px 8px 0; font-size:0.83rem; color:#5A4A1A; line-height:1.65;
+}
+.local-note-hdr {
+  font-size:0.6rem; letter-spacing:0.3em; text-transform:uppercase;
+  color:var(--accent); font-weight:600; margin-bottom:0.4rem;
+}
+.local-note ul { margin:0.3rem 0 0 1.1rem; }
+.local-note ul li { margin-bottom:0.2rem; }
+
+.reroute-note {
+  margin-top:1rem; padding:0.9rem 1.1rem;
+  background:#FFF0EB; border-left:3px solid #C96A2A;
+  border-radius:0 8px 8px 0; font-size:0.83rem; color:#5A2A0A; line-height:1.65;
+}
+.reroute-hdr {
+  font-size:0.6rem; letter-spacing:0.3em; text-transform:uppercase;
+  color:#C96A2A; font-weight:600; margin-bottom:0.4rem;
+}
+
+.heat-note {
+  margin-top:1rem; padding:0.9rem 1.1rem;
+  background:#FFF8E8; border-left:3px solid #C97000;
+  border-radius:0 8px 8px 0; font-size:0.83rem; color:#5A3800; line-height:1.65;
+}
+.heat-hdr {
+  font-size:0.6rem; letter-spacing:0.3em; text-transform:uppercase;
+  color:#C97000; font-weight:600; margin-bottom:0.4rem;
+}
+
+/* Side panel */
+.day-side { display:flex; flex-direction:column; gap:1rem; }
+.side-block { background:var(--mint-pale); border-radius:10px; padding:1.2rem; }
+.side-title {
+  font-size:0.6rem; letter-spacing:0.3em; text-transform:uppercase;
+  color:var(--mint-dark); font-weight:600; margin-bottom:0.7rem;
+}
+.side-item { display:flex; align-items:flex-start; gap:0.5rem; margin-bottom:0.5rem; font-size:0.83rem; color:var(--green-ink); }
+.side-item:last-child { margin-bottom:0; }
+.side-icon { flex-shrink:0; font-size:0.9rem; margin-top:0.1rem; }
+.drive-badge {
+  display:inline-flex; align-items:center; gap:0.4rem;
+  background:var(--mint-deep); color:var(--white);
+  padding:0.4rem 0.9rem; border-radius:20px; font-size:0.75rem; font-weight:500;
+}
+
+/* ── BASE CHANGE BANNER ── */
+.base-change {
+  background:linear-gradient(90deg,var(--mint-dark),var(--mint-deep));
+  color:var(--white); text-align:center; padding:0.8rem 1rem;
+  font-size:0.65rem; letter-spacing:0.4em; text-transform:uppercase;
+  border-radius:8px; margin:0.5rem 0;
+}
+
+/* ── FOOD SECTION ── */
+.food-section { background:var(--green-ink); padding:5rem 0; }
+.food-section .section-title { color:var(--mint-light); }
+.food-section .section-tag { color:var(--mint); }
+.food-section .section-rule { background:var(--mint); }
+.food-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:1rem; margin-top:2rem; }
+.food-card {
+  background:rgba(255,255,255,0.05); border:1px solid rgba(168,213,194,0.15);
+  border-radius:12px; padding:1.4rem; display:flex; gap:0.9rem;
+  transition:background 0.2s;
+}
+.food-card:hover { background:rgba(168,213,194,0.08); }
+.food-emoji { font-size:1.8rem; flex-shrink:0; line-height:1; }
+.food-name { font-family:'Playfair Display',serif; font-size:1rem; color:var(--mint-light); display:block; margin-bottom:0.2rem; }
+.food-desc { font-size:0.8rem; color:rgba(255,255,255,0.5); line-height:1.55; }
+
+/* ── GREEK SECTION ── */
+.greek-section { background:linear-gradient(135deg,#0A1628 0%,#0D2240 50%,#0A1628 100%); padding:5rem 0; }
+.greek-section .section-title { color:#B8D4F0; }
+.greek-section .section-tag { color:#7AABDC; }
+.greek-section .section-rule { background:#7AABDC; }
+.greek-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:1.2rem; margin-top:2rem; }
+.greek-card {
+  border:1px solid rgba(184,212,240,0.15); border-radius:12px; padding:1.6rem;
+  background:rgba(255,255,255,0.03); position:relative;
+  transition:background 0.2s;
+}
+.greek-card:hover { background:rgba(184,212,240,0.05); }
+.greek-card-name { font-family:'Cinzel',serif; font-size:1rem; color:#B8D4F0; margin-bottom:0.2rem; }
+.greek-card-city { font-size:0.62rem; letter-spacing:0.3em; text-transform:uppercase; color:rgba(184,212,240,0.45); margin-bottom:0.7rem; }
+.greek-card-text { font-size:0.83rem; color:rgba(255,255,255,0.5); line-height:1.6; }
+.greek-badge {
+  display:inline-block; margin-top:0.7rem;
+  background:rgba(184,212,240,0.08); border:1px solid rgba(184,212,240,0.25);
+  color:#B8D4F0; font-size:0.58rem; letter-spacing:0.2em; padding:0.2rem 0.6rem;
+  text-transform:uppercase; border-radius:4px;
+}
+
+/* ── TIPS ── */
+.tips-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:1rem; margin-top:2rem; }
+.tip-card { background:var(--white); border:1px solid var(--light-border); border-radius:12px; padding:1.4rem; }
+.tip-icon { font-size:1.4rem; margin-bottom:0.5rem; display:block; }
+.tip-title { font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--mint-dark); font-weight:600; margin-bottom:0.4rem; }
+.tip-text { font-size:0.83rem; color:var(--stone); line-height:1.6; }
+
+/* ── FOOTER ── */
+footer { background:var(--green-ink); padding:3rem 2rem; text-align:center; }
+.footer-logo { font-family:'Cinzel',serif; font-size:1.4rem; color:var(--mint); margin-bottom:0.4rem; }
+.footer-sub { font-family:'Playfair Display',serif; font-style:italic; color:rgba(255,255,255,0.3); font-size:0.9rem; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width:5px; }
+::-webkit-scrollbar-track { background:var(--cream); }
+::-webkit-scrollbar-thumb { background:var(--mint-deep); border-radius:3px; }
+
+@media(max-width:600px){
+  .day-header { grid-template-columns:70px 1fr; }
+  .day-summary { padding:1rem 1.2rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <svg class="hero-rings" viewBox="0 0 600 600" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:700px;height:700px;pointer-events:none">
+    <circle class="hero-ring1" cx="300" cy="300" r="280" stroke-dasharray="8 12"/>
+    <circle class="hero-ring2" cx="300" cy="300" r="230" stroke-dasharray="3 20"/>
+    <circle class="hero-ring1" cx="300" cy="300" r="180" stroke-dasharray="1 15"/>
+  </svg>
+  <div class="hero-content">
+    <p class="hero-tag">Sicily · 27 July – 7 August 2026</p>
+    <h1 class="hero-title">SICILIA<em>A journey around the island</em></h1>
+    <div class="hero-divider"></div>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><span class="hero-meta-num">12</span><span class="hero-meta-label">Days</span></div>
+      <div class="hero-meta-item"><span class="hero-meta-num">4</span><span class="hero-meta-label">Bases</span></div>
+      <div class="hero-meta-item"><span class="hero-meta-num">11</span><span class="hero-meta-label">Nights</span></div>
+      <div class="hero-meta-item"><span class="hero-meta-num">∞</span><span class="hero-meta-label">Memories</span></div>
+    </div>
+    <div class="hero-flights">
+      <div class="flight-badge">✈ <strong>V7 1513</strong> ATH→PMO · 27 Jul 13:40 · Ref: A4VGPI</div>
+      <div class="flight-badge">✈ <strong>FR 5105</strong> CTA→ATH · 7 Aug 11:45 · Ref: F1HSRZ</div>
+    </div>
+    <div class="flight-badge" style="margin-top:0.8rem;display:inline-block">🚗 <strong>Ecovia</strong> VW T-Cross · PMO 15:00 → CTA 09:30 · ECO-26126575</div>
+  </div>
+  <div class="scroll-hint">↓ scroll to explore</div>
+</div>
+
+<!-- NAV -->
+<nav class="nav-tabs" id="nav">
+  <button class="nav-tab active" onclick="showTab('itinerary')">Itinerary</button>
+  <button class="nav-tab" onclick="showTab('map')">Map</button>
+  <button class="nav-tab" onclick="showTab('hotels')">Hotels</button>
+  <button class="nav-tab" onclick="showTab('food')">Food & Drink</button>
+  <button class="nav-tab" onclick="showTab('greek')">Greek Heritage</button>
+  <button class="nav-tab" onclick="showTab('tips')">Tips</button>
+</nav>
+
+<!-- ══════════ ITINERARY TAB ══════════ -->
+<div id="tab-itinerary" class="tab-content">
+<div class="section">
+  <div class="section-header">
+    <span class="section-tag">Day by Day</span>
+    <h2 class="section-title">The Full Itinerary</h2>
+    <div class="section-rule"></div>
+  </div>
+  <div class="days-list">
+
+    <!-- DAY 1 -->
+    <div class="day-card" id="day1">
+      <div class="day-header" onclick="toggleDay('day1')">
+        <div class="day-num-col"><div class="day-num">1</div><div class="day-word">Day</div><div class="day-badge">Arrival</div></div>
+        <div class="day-summary">
+          <div class="day-date">Monday 27 July 2026</div>
+          <div class="day-title">Arrive Palermo — First Taste</div>
+          <div class="day-quick">
+            <span class="day-quick-item">🏨 Palermo</span>
+            <span class="day-quick-item">🚗 ~30 min driving</span>
+          </div>
+        </div>
+        <div class="day-expand-icon">▾</div>
+      </div>
+      <div class="day-body">
+        <div class="day-body-inner">
+          <div>
+            <div class="time-block">
+              <span class="time-label afternoon">Afternoon</span>
+              <p class="time-text">Land at <strong>Palermo Airport PMO 14:35</strong>. Call Ecovia shuttle immediately on landing: <strong>+39 091 869 4268</strong>. Wait at "Exit Car Valet" sign in front of taxi lane. Must collect car by 15:59 — do not linger at baggage. Drive to Palermo hotel (~30 min).</p>
+            </div>
+            <div class="time-block">
+              <span class="time-label evening">Evening</span>
+              <p class="time-text">Start from the <strong>port area</strong> — best parking. Walk through to <strong>Porta Felice</strong> taking in the raw "architettura spontanea" waterfront character. Then into <strong>Mercato della Vucciria</strong> and <strong>Ballarò</strong> for street food. First impressions of Palermo at night — chaotic, beautiful, unforgettable.</p>
+            </div>
+            <div class="local-note">
+              <div class="local-note-hdr">🇮🇹 Local Insider — Best Milza Vendors</div>
+              For <em>pane con la milza</em> (spleen sandwich): <strong>Da Rochi</strong> at the Vucciria entrance, or <strong>Nino Ballerino</strong> near the Tribunale. Also: <strong>Arancine ke Palle</strong> on Via Macheda — local favourite, with a cannoli shop immediately next door.
+            </div>
+          </div>
+          <div class="day-side">
+            <div class="side-block">
+              <div class="side-title">Today's Stops</div>
+              <div class="side-item"><span class="side-icon">✈️</span><span>PMO Airport — collect Ecovia car</span></div>
+              <div class="side-item"><span class="side-icon">🚶</span><span>Port area → Porta Felice walk</span></div>
+              <div class="side-item"><span class="side-icon">🍢</span><span>Vucciria & Ballarò markets</span></div>
+              <div class="side-item"><span class="side-icon">🥪</span><span>Da Rochi / Nino Ballerino — milza</span></div>
+            </div>
+            <div class="side-block">
+              <div class="side-title">Driving</div>
+              <span class="drive-badge">🚗 ~30 min total</span>
+              <p style="font-size:0.78rem;color:var(--stone);margin-top:0.5rem">Airport → hotel only. Easy first day.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 2 -->
+    <div class="day-card" id="day2">
+      <div class="day-header" onclick="toggleDay('day2')">
+        <div class="day-num-col"><div class="day-num">2</div><div class="day-word">Day</div><div class="day-badge">UNESCO</div></div>
+        <div class="day-summary">
+          <div class="day-date">Tuesday 28 July 2026</div>
+          <div class="day-title">Palermo — Arab-Norman Splendour</div>
+          <div class="day-quick">
+            <span class="day-quick-item">🏨 Palermo</span>
+            <span class="day-quick-item">🏖️ Mondello lido</span>
+            <span class="day-quick-item">🚗 ~35 min driving</span>
+          </div>
+        </div>
+        <div class="day-expand-icon">▾</div>
+      </div>
+      <div class="day-body">
+        <div class="day-body-inner">
+          <div>
+            <div class="time-block">
+              <span class="time-label morning">Morning</span>
+              <p class="time-text"><strong>Mondello lido</strong> — Palermo's famous organised beach, 12 km from centre. Fine white sand, retro Art Nouveau pavilion, turquoise Tyrrhenian water. Rent umbrella + 2 sunbeds (€20–30/day). Relax until noon.</p>
+            </div>
+            <div class="time-block">
+              <span class="time-label afternoon">Afternoon</span>
+              <p class="time-text"><strong>Cappella Palatina</strong> inside the Norman Palace — 6,340 sqm of Byzantine gold mosaics, the most breathtaking interior in Sicily. Visit early afternoon before it gets crowded. Then <strong>La Cuba</strong> (12th-century Arab-Norman pavilion) → <strong>Piazza della Vergogna</strong> (Piazza Pretoria — the nude fountain that scandalised the church) → <strong>La Martorana church</strong> → <strong>Cimitero dei Cappuccini</strong> — the famous catacombs with ~8,000 mummified bodies in robes. Eerie and extraordinary.</p>
+            </div>
+            <div class="time-block">
+              <span class="time-label evening">Evening</span>
+              <p class="time-text">Lunch option: <strong>Ciuri Ciuri</strong> (Via Vittorio Emanuele 188, rated 4.9/5) — the first all-you-can-eat <em>Sicilian</em> restaurant in Palermo. Try 8–10 traditional dishes in one sitting: pasta alla Norma, caponata, arancine, cannoli. Available Mon–Fri, perfect for your Tuesday. Evening dinner near <strong>Teatro Massimo</strong> — <strong>Bisso Bistrot</strong> (inside a bookshop) for <em>pasta con le sarde</em>, or <strong>Trattoria Del Massimo</strong> for traditional home cooking.</p>
+            </div>
+            <div class="local-note">
+              <div class="local-note-hdr">🇮🇹 Local Insider — Palermo Details</div>
+              Start the city visit from the <strong>port area</strong> — best parking. Walk to Porta Felice first. <strong>Optional: Monreale Cathedral</strong> can be added this afternoon (20 min drive) if you have energy — but we have it properly on Day 3 return from Cefalù. For lunch: <strong>Ciuri Ciuri</strong> (Via Vittorio Emanuele 188) — Sicily's first all-you-can-eat traditional Sicilian restaurant, rated 4.9/5 on TripAdvisor and recommended by our Italian friend. Mon–Fri only, perfect for Tuesday.
+            </div>
+          </div>
+          <div class="day-side">
+            <div class="side-block">
+              <div class="side-title">In Order of Visit</div>
+              <div class="side-item"><span class="side-icon">🏖️</span><span>Mondello lido (morning)</span></div>
+              <div class="side-item"><span class="side-icon">🕌</span><span>Cappella Palatina & Palazzo Normanni</span></div>
+              <div class="side-item"><span class="side-icon">🏛️</span><span>La Cuba — Arab-Norman pavilion</span></div>
+              <div class="side-item"><span class="side-icon">⛲</span><span>Piazza della Vergogna</span></div>
+              <div class="side-item"><span class="side-icon">⛪</span><span>La Martorana church</span></div>
+              <div class="side-item"><span class="side-icon">💀</span><span>Cimitero dei Cappuccini</span></div>
+              <div class="side-item"><span class="side-icon">🍽️</span><span>Ciuri Ciuri — all-you-can-eat Sicilian lunch</span></div>
+              <div class="side-item"><span class="side-icon">🎭</span><span>Bisso Bistrot / Trattoria Del Massimo — dinner</span></div>
+            </div>
+            <div class="side-block">
+              <div class="side-title">Driving</div>
+              <span class="drive-badge">🚗 ~35 min total</span>
+              <p style="font-size:0.78rem;color:var(--stone);margin-top:0.5rem">Hotel → Mondello (12 km) and back. All afternoon visits walkable from centre.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 3 -->
+    <div class="day-card" id="day3">
+      <div class="day-header" onclick="toggleDay('day3')">
+        <div class="day-num-col"><div class="day-num">3</div><div class="day-word">Day</div><div class="day-badge">Day Trip</div></div>
+        <div class="day-summary">
+          <div class="day-date">Wednesday 29 July 2026</div>
+          <div class="day-title">Cefalù & Monreale</div>
+          <div class="day-quick">
+            <span class="day-quick-item">🏨 Palermo</span>
+            <span class="day-quick-item">🏖️ Cefalù lido</span>
+            <span class="day-quick-item">🚗 ~130 min driving</span>
+          </div>
+        </div>
+        <div class="day-expand-icon">▾</div>
+      </div>
+      <div class="day-body">
+        <div class="day-body-inner">
+          <div>
+            <div class="time-block">
+              <span class="time-label morning">Morning</span>
+              <p class="time-text">Drive east to <strong>Cefalù</strong> (1 hr from Palermo). Visit the <strong>Cefalù Cathedral</strong> (1131 AD) first — magnificent Arab-Norman architecture with glittering Byzantine Christ Pantocrator mosaic. Then the hidden <strong>Lavatoio Medievale</strong> — ancient wash-house fed by natural springs below street level. Walk the tiny medieval <em>centro storico</em>.</p>
+            </div>
+            <div class="time-block">
+              <span class="time-label afternoon">Afternoon</span>
+              <p class="time-text"><strong>Cefalù lido</strong> — organised beach right in the town. Biscuit-coloured sand, clear Tyrrhenian water, beautiful setting under the Norman castle rock. Sunbeds available. Spend the full afternoon here — one of the most picturesque beach towns in Sicily.</p>
+            </div>
+            <div class="time-block">
+              <span class="time-label evening">Evening</span>
+              <p class="time-text">Drive back toward Palermo stopping at <strong>Monreale Cathedral</strong> — the world's greatest Norman cathedral, with 6,340 sqm of Byzantine gold mosaics. Closes 5:30pm — time the return accordingly. Dinner back in Palermo.</p>
+            </div>
+            <div class="local-note">
+              <div class="local-note-hdr">🇮🇹 Local Insider — Cefalù Dining</div>
+              For lunch or dinner with sea views in Cefalù: <strong>Covo del Pirata</strong> — seafood, terrace dining, views over the water. More reliable than the generic tourist strip on the main corso.
+            </div>
+          </div>
+          <div class="day-side">
+            <div class="side-block">
+              <div class="side-title">In Order of Visit</div>
+              <div class="side-item"><span class="side-icon">⛪</span><span>Cefalù Cathedral (morning)</span></div>
+              <div class="side-item"><span class="side-icon">💧</span><span>Lavatoio Medievale</span></div>
+              <div class="side-item"><span class="side-icon">🏘️</span><span>Cefalù old town walk</span></div>
+              <div class="side-item"><span class="side-icon">🏖️</span><span>Cefalù lido (afternoon)</span></div>
+              <div class="side-item"><span class="side-icon">⛪</span><span>Monreale Cathedral (return stop)</span></div>
+            </div>
+            <div class="side-block">
+              <div class="side-title">Driving</div>
+              <span class="drive-badge">🚗 ~130 min total</span>
+              <p style="font-size:0.78rem;color:var(--stone);margin-top:0.5rem">Palermo→Cefalù 60 min · Cefalù→Monreale 40 min · Monreale→Palermo 20 min</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="base-change">⬡ Checking out Palermo — Moving to Base 2 · Trapani ⬡</div>
+
+    <!-- DAY 4 -->
+    <div class="day-card" id="day4">
+      <div class="day-header" onclick="toggleDay('day4')">
+        <div class="day-num-col"><div class="day-num">4</div><div class="day-word">Day</div><div class="day-badge">Greek!</div></div>
+        <div class="day-summary">
+          <div class="day-date">Thursday 30 July 2026</div>
+          <div class="day-title">Segesta, Scopello & Tonnara di Scopello</div>
+          <div class="day-quick">
+            <span class="day-quick-item">🏨 Trapani</span>
+            <span class="day-quick-item">🏖️ Tonnara di Scopello</span>
+            <span class="day-quick-item">🚗 ~120 min driving</span>
+          </div>
+        </div>
+        <div class="day-expand-icon">▾</div>
+      </div>
+      <div class="day-body">
+        <div class="day-body-inner">
+          <div>
+            <div class="time-block">
+              <span class="time-label morning">Morning</span>
+              <p class="time-text">Checkout Palermo, drive toward Trapani. Stop at <strong>Segesta</strong> (1 hr from Palermo) — one of the most hauntingly beautiful Greek temples in existence, rising alone from wild hills. Built 430–420 BC by the Elymians. The unfinished theatre above has extraordinary views. Allow 2 hrs. Go early — fully exposed site, heat builds fast.</p>
+            </div>
+            <div class="time-block">
+              <span class="time-label afternoon">Afternoon</span>
+              <p class="time-text">Continue to <strong>Scopello village</strong> — tiny hamlet with an old tonnara (tuna fishery) and dramatic faraglioni rock stacks. Then <strong>Tonnara di Scopello</strong> — one of the most iconic swimming spots in western Sicily. Ancient tuna fishery buildings on a rocky promontory, enormous faraglioni rising from turquoise water. Entry fee ~€10pp. Arrive before 2pm — admission limited. Rocky entry but extraordinary water.</p>
+            </div>
+            <div class="time-block">
+              <span class="time-label evening">Evening</span>
+              <p class="time-text">Check into <strong>Trapani base</strong>. Dinner at <strong>La Bettolaccia</strong> — book ahead. The definitive <em>couscous al pesce</em> (fish couscous) — the North African-influenced dish unique to the Trapani area. Via Fardella 23, Trapani.</p>
+            </div>
+            <div class="local-note">
+              <div class="local-note-hdr">🏛️ Greek Connection — Segesta</div>
+              The Elymians built this temple to impress Greek visitors but were never conquered by Greece. The sophisticated Greek architectural form adopted by non-Greeks is a remarkable statement of cultural power. As a Greek you'll feel this history viscerally.
+            </div>
+          </div>
+          <div class="day-side">
+            <div class="side-block">
+              <div class="side-title">In Order of Visit</div>
+              <div class="side-item"><span class="side-icon">🏛️</span><span>Segesta — Greek temple & theatre</span></div>
+              <div class="side-item"><span class="side-icon">🏘️</span><span>Scopello village & faraglioni</span></div>
+              <div class="side-item"><span class="side-icon">🏊</span><span>Tonnara di Scopello — swim</span></div>
+              <div class="side-item"><span class="side-icon">🍝</span><span>La Bettolaccia — couscous al pesce</span></div>
+            </div>
+            <div class="side-block">
+              <div class="side-title">Driving</div>
+              <span class="drive-badge">🚗 ~120 min total</span>
+              <p style="font-size:0.78rem;color:var(--stone);margin-top:0.5rem">Palermo→Segesta 60 min · Segesta→Scopello 30 min · Scopello→Trapani 30 min</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 5 -->
+    <div class="day-card" id="day5">
+      <div class="day-header" onclick="toggleDay('day5')">
+        <div class="day-num-col"><div class="day-num">5</div><div class="day-word">Day</div><div class="day-badge">Island ✓</div></div>
+        <div class="day-summary">
+          <div class="day-date">Friday 31 July 2026</div>
+          <div class="day-title">Favignana & Levanzo — Egadi Islands Boat Tour</div>
+          <div class="day-quick">
+            <span class="day-quick-item">🏨 Le Mura Charme — Trapani</span>
+            <span class="day-quick-item">🏖️ Cala Azzurra + Cala Rossa + Levanzo</span>
+            <span class="day-quick-item">🚗 ~20 min driving</span>
+          </div>
+        </div>
+        <div class="day-expand-icon">▾</div>
+      </div>
+      <div class="day-body">
+        <div class="day-body-inner">
+          <div>
+            <div class="time-block">
+              <span class="time-label morning">Morning</span>
+              <p class="time-text">Walk 5 min from Le Mura to <strong>18 Via Ammiraglio Staiti</strong> — meet <strong>MareandMore Tour</strong> by <strong>9:30am</strong> (30 min before departure). Depart 10:00am on the boat. First stops on <strong>Favignana</strong>: <strong>Cala Azzurra</strong> (crystalline blue-green water, often compared to the Caribbean) → <strong>Bue Marino</strong> → <strong>Cala Rossa</strong> (extraordinary volcanic red rock formations meeting turquoise water — the most spectacular cove on the island). Swimming and snorkelling at each stop. Snorkelling equipment provided.</p>
+            </div>
+            <div class="time-block">
+              <span class="time-label afternoon">Afternoon</span>
+              <p class="time-text">1:30pm — 1 hour exploration of <strong>Favignana town</strong> and optional visit to the <strong>Florio Tonnara Museum</strong> (beautifully restored tuna fishery). 3:30pm — sail to <strong>Levanzo</strong>: <strong>Cala Fredda</strong> and <strong>Cala Minnola</strong> — wilder, more remote than Favignana, extraordinary water. Levanzo also has prehistoric cave paintings (Grotta del Genovese) if curious. Return to Trapani by 6pm.</p>
+            </div>
+            <div class="time-block">
+              <span class="time-label evening">Evening</span>
+              <p class="time-text">Return to Trapani 6pm. Drive up to <strong>Erice</strong> for dinner — medieval mountaintop village at 750m, cool even in August, magical at dusk. Take the cable car up from Trapani (last down ~20:30 in summer — check current times). <strong>Pasticceria Maria Grammatico</strong> for almond pastries.</p>
+            </div>
+            <div class="local-note">
+              <div class="local-note-hdr">✅ Booking Confirmed — MAR-T131884176</div>
+              <strong>MareandMore Tour</strong> · Egadi Day to discover Favignana and Levanzo<br>
+              Fri 31 July 2026 · 10:00am · 2 adults · <strong>€200 total</strong> (deposit paid)<br>
+              Meeting point: 18 Via Ammiraglio Staiti, Trapani · Tel: +39 09231760006<br>
+              ⚠️ <strong>Free cancellation until Thu 23 July 2026</strong> — 100% charge if cancelled within 7 days.
+            </div>
+          </div>
+          <div class="day-side">
+            <div class="side-block">
+              <div class="side-title">Tour Schedule</div>
+              <div class="side-item"><span class="side-icon">🕤</span><span>9:30am — arrive meeting point</span></div>
+              <div class="side-item"><span class="side-icon">⛵</span><span>10:00am — depart Trapani</span></div>
+              <div class="side-item"><span class="side-icon">🏖️</span><span>Favignana — Cala Azzurra</span></div>
+              <div class="side-item"><span class="side-icon">🏖️</span><span>Favignana — Bue Marino</span></div>
+              <div class="side-item"><span class="side-icon">🏖️</span><span>Favignana — Cala Rossa</span></div>
+              <div class="side-item"><span class="side-icon">🏘️</span><span>1:30pm — Favignana town visit</span></div>
+              <div class="side-item"><span class="side-icon">🏝️</span><span>3:30pm — Levanzo (Cala Fredda + Minnola)</span></div>
+              <div class="side-item"><span class="side-icon">⛵</span><span>6:00pm — return Trapani</span></div>
+              <div class="side-item"><span class="side-icon">🏰</span><span>Evening — Erice cable car & dinner</span></div>
+            </div>
+            <div class="side-block">
+              <div class="side-title">Driving</div>
+              <span class="drive-badge">🚗 ~20 min total</span>
+              <p style="font-size:0.78rem;color:var(--stone);margin-top:0.5rem">Walk to boat (5 min) · Cable car to Erice (10 min). Almost entirely car-free day.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 6 -->
+    <div class="day-card" id="day6">
+      <div class="day-header" onclick="toggleDay('day6')">
+        <div class="day-num-col"><div class="day-num">6</div><div class="day-word">Day</div><div class="day-badge">Beach</div></div>
+        <div class="day-summary">
+          <div class="day-date">Saturday 1 August 2026</div>
+          <div class="day-title">San Vito Lo Capo — The Best Beach</div>
+          <div class="day-quick">
+            <span class="day-quick-item">🏨 Trapani</span>
+            <span class="day-quick-item">🏖️ San Vito Lo Capo lido</span>
+            <span class="day-quick-item">🚗 ~90 min driving</span>
+          </div>
+        </div>
+        <div class="day-expand-icon">▾</div>
+      </div>
+      <div class="day-body">
+        <div class="day-body-inner">
+          <div>
+            <div class="time-block">
+              <span class="time-label morning">Morning</span>
+              <p class="time-text">Drive north to <strong>San Vito Lo Capo</strong> (45 min from Trapani). 3 km of white powder sand, Blue Flag, shallow and calm Mediterranean water. THE organised lido of western Sicily — multiple beach clubs, umbrellas, sunbeds, bars. Arrive early (9am) to secure the best spot. Spend the full morning.</p>
+            </div>
+            <div class="time-block">
+              <span class="time-label afternoon">Afternoon</span>
+              <p class="time-text">Lazy afternoon at the beach or stroll the San Vito Lo Capo village — charming fishing village, good <em>pane e panelle</em> (chickpea fritter sandwich) from street vendors. Return to Trapani by late afternoon.</p>
+            </div>
+            <div class="time-block">
+              <span class="time-label evening">Evening</span>
+              <p class="time-text">Dinner in Trapani or return to Erice for a sunset walk if you missed it on Day 5. Try <em>granita di gelsomino</em> (jasmine granita) — a Trapani speciality unlike anything in eastern Sicily.</p>
+            </div>
+            <div class="local-note">
+              <div class="local-note-hdr">🌊 Optional Addition — Cala dell'Uzzo</div>
+              If you prefer a wilder experience, <strong>Cala dell'Uzzo inside the Zingaro Reserve</strong> is 20 min from San Vito. Extraordinary cove, protected reserve water, pristine. Requires a 20-min hike in — bring water and food, no facilities. Decide on the day based on energy levels.
+            </div>
+          </div>
+          <div class="day-side">
+            <div class="side-block">
+              <div class="side-title">In Order of Visit</div>
+              <div class="side-item"><span class="side-icon">🏖️</span><span>San Vito Lo Capo lido (full day)</span></div>
+              <div class="side-item"><span class="side-icon">🏘️</span><span>San Vito village stroll</span></div>
+              <div class="side-item"><span class="side-icon">🌊</span><span>Optional: Cala dell'Uzzo — Zingaro</span></div>
+            </div>
+            <div class="side-block">
+              <div class="side-title">Driving</div>
+              <span class="drive-badge">🚗 ~90 min total</span>
+              <p style="font-size:0.78rem;color:var(--stone);margin-top:0.5rem">Trapani→San Vito 45 min · return 45 min. Saturday — busy coastal roads, leave early.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 7 -->
+    <div class="day-card" id="day7">
+      <div class="day-header" onclick="toggleDay('day7')">
+        <div class="day-num-col"><div class="day-num">7</div><div class="day-word">Day</div><div class="day-badge">South</div></div>
+        <div class="day-summary">
+          <div class="day-date">Sunday 2 August 2026</div>
+          <div class="day-title">Lido Signorino, Marsala & Mazara del Vallo</div>
+          <div class="day-quick">
+            <span class="day-quick-item">🏨 Trapani</span>
+            <span class="day-quick-item">🏖️ Lido Signorino</span>
+            <span class="day-quick-item">🚗 ~115 min driving</span>
+          </div>
+        </div>
+        <div class="day-expand-icon">▾</div>
+      </div>
+      <div class="day-body">
+        <div class="day-body-inner">
+          <div>
+            <div class="time-block">
+              <span class="time-label morning">Morning</span>
+              <p class="time-text">Drive south to <strong>Lido Signorino</strong> (40 min from Trapani) — organised lido between Trapani and Marsala. Long sandy beach, calm shallow water, Blue Flag. Full facilities, sunbeds, beach bar. Quieter than San Vito on a Sunday. Swim and relax until noon.</p>
+            </div>
+            <div class="time-block">
+              <span class="time-label afternoon">Afternoon</span>
+              <p class="time-text">10 min drive to <strong>Marsala</strong>: <strong>Museo Baglio Anselmi</strong> (Punic warship museum — the only intact Carthaginian war galley ever found, 3rd century BC, 45 min) → <strong>salt pans and windmills</strong> (stunning landscape, pink flamingos, beautiful in afternoon light, 20 min walk). Then continue to <strong>Mazara del Vallo</strong> (25 min) — walk the extraordinary <strong>Arab quarter medina</strong>, more North African than Italian. Lunch/late lunch at <strong>L'Antica Sicilia</strong> for <em>gambero rosso di Mazara</em> — the world-famous red prawn, eaten here at the source.</p>
+            </div>
+            <div class="time-block">
+              <span class="time-label evening">Evening</span>
+              <p class="time-text">Return to Trapani (40 min). Last evening in the west — aperitivo on the waterfront and <em>cous cous con pesce</em> leftovers or light dinner. Tomorrow is the big transit day.</p>
+            </div>
+            <div class="local-note">
+              <div class="local-note-hdr">🇮🇹 Local Insider — Mazara del Vallo</div>
+              Your Italian friend rates this as the <strong>best fish in Italy</strong>. The Tunisian fishing community settled here for generations makes the medina feel genuinely North African — unlike anywhere else on the island. The <em>gambero rosso</em> prawns are world-renowned. Order them raw (<em>crudo</em>) if available — the real experience.
+            </div>
+          </div>
+          <div class="day-side">
+            <div class="side-block">
+              <div class="side-title">In Order of Visit</div>
+              <div class="side-item"><span class="side-icon">🏖️</span><span>Lido Signorino (morning)</span></div>
+              <div class="side-item"><span class="side-icon">⚓</span><span>Marsala — Punic warship museum</span></div>
+              <div class="side-item"><span class="side-icon">🌊</span><span>Marsala — salt pans & windmills</span></div>
+              <div class="side-item"><span class="side-icon">🕌</span><span>Mazara del Vallo — Arab quarter</span></div>
+              <div class="side-item"><span class="side-icon">🦐</span><span>L'Antica Sicilia — gambero rosso</span></div>
+            </div>
+            <div class="side-block">
+              <div class="side-title">Driving</div>
+              <span class="drive-badge">🚗 ~115 min total</span>
+              <p style="font-size:0.78rem;color:var(--stone);margin-top:0.5rem">Trapani→Lido Signorino 40 min · →Marsala 10 min · →Mazara 25 min · →Trapani 40 min</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="base-change">⬡ Checking out Trapani — Moving to Base 3 · Syracuse / Ortigia ⬡</div>
+
+    <!-- DAY 8 -->
+    <div class="day-card" id="day8">
+      <div class="day-header" onclick="toggleDay('day8')">
+        <div class="day-num-col"><div class="day-num">8</div><div class="day-word">Day</div><div class="day-badge">Transit</div></div>
+        <div class="day-summary">
+          <div class="day-date">Monday 3 August 2026</div>
+          <div class="day-title">Selinunte, Scala dei Turchi & Valle dei Templi</div>
+          <div class="day-quick">
+            <span class="day-quick-item">🏨 Syracuse/Ortigia</span>
+            <span class="day-quick-item">🚗 ~170 min driving</span>
+          </div>
+        </div>
+        <div class="day-expand-icon">▾</div>
+      </div>
+      <div class="day-body">
+        <div class="day-body-inner">
+          <div>
+            <div class="time-block">
+              <span class="time-label morning">Morning</span>
+              <p class="time-text">Checkout Trapani <strong>by 8:00am</strong> — this is essential. Drive to <strong>Selinunte Archaeological Park</strong> (1.5 hrs). Arrive at opening (8:30am — before the heat). The largest Greek archaeological site in the world by area — seven massive temples on a coastal promontory. Founded 628 BC, destroyed by Carthage 409 BC. Allow 2 hrs. No swim today — keep moving.</p>
+            </div>
+            <div class="time-block">
+              <span class="time-label afternoon">Afternoon</span>
+              <p class="time-text">Drive to <strong>Scala dei Turchi</strong> (1 hr from Selinunte). The iconic white limestone cliff sculpted by wind and sea into natural steps above azure water. Walk to the viewpoint, take photos, 30–45 min stop. The colour of the water and the sculpted white rock are genuinely surreal — unlike anything else in Europe. No swim — just the spectacle. Then 20 min to <strong>Agrigento old town</strong> — walk the Arab quarter streets, find an aperitivo bar, rest for 45 min.</p>
+            </div>
+            <div class="time-block">
+              <span class="time-label evening">Evening</span>
+              <p class="time-text">At <strong>4:30pm sharp</strong> — <strong>Valle dei Templi</strong>. The finest collection of Doric temples outside Greece. Fully exposed south-facing ridge — visiting at this hour means heat has broken, golden light, open until dusk (~7:30–8pm). The Temple of Concordia (5th c. BC) is better preserved than most temples in Greece itself. Allow 2–2.5 hrs. Then drive to <strong>Syracuse/Ortigia</strong> (1 hr 20 min). Check in. Late dinner on Ortigia island.</p>
+            </div>
+            <div class="heat-note">
+              <div class="heat-hdr">☀️ Heat Warning — Valle dei Templi</div>
+              <strong>Never visit in the morning.</strong> Fully exposed ridge, zero shade, 40°C+ in July/August. The 4:30pm golden hour visit is the correct and only comfortable approach. Agrigento locals do not visit before 5pm in summer.
+            </div>
+            <div class="local-note">
+              <div class="local-note-hdr">🏛️ Greek Connection — Selinunte</div>
+              Founded by Greeks from Megara Hyblaea in 628 BC. Destroyed by Carthage in 409 BC in one of antiquity's most brutal sackings — the ruins were never rebuilt. What you see is essentially a frozen moment of destruction from 2,400 years ago.
+            </div>
+          </div>
+          <div class="day-side">
+            <div class="side-block">
+              <div class="side-title">In Order of Visit</div>
+              <div class="side-item"><span class="side-icon">🏛️</span><span>Selinunte — Greek temples (8:30am)</span></div>
+              <div class="side-item"><span class="side-icon">🪨</span><span>Scala dei Turchi — viewpoint</span></div>
+              <div class="side-item"><span class="side-icon">🍹</span><span>Agrigento old town — aperitivo</span></div>
+              <div class="side-item"><span class="side-icon">🏛️</span><span>Valle dei Templi — golden hour 4:30pm</span></div>
+              <div class="side-item"><span class="side-icon">🏨</span><span>Check in Syracuse/Ortigia</span></div>
+            </div>
+            <div class="side-block">
+              <div class="side-title">Driving</div>
+              <span class="drive-badge">🚗 ~170 min total</span>
+              <p style="font-size:0.78rem;color:var(--stone);margin-top:0.5rem">Trapani→Selinunte 90 min · →Scala dei Turchi 60 min · →Agrigento 20 min · →Syracuse 80 min</p>
+              <p style="font-size:0.75rem;color:#C96A2A;margin-top:0.5rem;font-weight:500">⚠️ Heaviest day — depart 8am without exception</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 9 -->
+    <div class="day-card" id="day9">
+      <div class="day-header" onclick="toggleDay('day9')">
+        <div class="day-num-col"><div class="day-num">9</div><div class="day-word">Day</div><div class="day-badge">Greek!</div></div>
+        <div class="day-summary">
+          <div class="day-date">Tuesday 4 August 2026</div>
+          <div class="day-title">Ortigia, Neapolis & Pantalica</div>
+          <div class="day-quick">
+            <span class="day-quick-item">🏨 La Casa di Marta — Ortigia</span>
+            <span class="day-quick-item">🏖️ Fontane Bianche (optional)</span>
+            <span class="day-quick-item">🚗 ~110 min driving</span>
+          </div>
+        </div>
+        <div class="day-expand-icon">▾</div>
+      </div>
+      <div class="day-body">
+        <div class="day-body-inner">
+          <div>
+            <div class="time-block">
+              <span class="time-label morning">Morning</span>
+              <p class="time-text">Start on foot from your hotel — <strong>Ortigia island morning walk</strong>. The original Greek colony founded 734 BC by Corinthians. <strong>Piazza del Duomo</strong> at 9am before tourist groups arrive — the Baroque Duomo was built directly around the <strong>Temple of Athena</strong> (5th c. BC), original Doric columns still visible and touchable inside the church walls. Mind-bending. <strong>Fonte Aretusa</strong> — the freshwater spring that Pindar and Cicero wrote about, papyrus plants, ducks, mythological atmosphere.</p>
+            </div>
+            <div class="time-block">
+              <span class="time-label morning">Late Morning</span>
+              <p class="time-text">Drive 15 min to <strong>Neapolis Archaeological Park</strong>. The <strong>Greek Theatre</strong> (5th c. BC, still used for performances today) → the <strong>Ear of Dionysius</strong> (enormous limestone cave with extraordinary acoustics, legend says Dionysius listened to prisoners' whispers from above) → Roman amphitheatre. Allow 1.5–2 hrs.</p>
+            </div>
+            <div class="time-block">
+              <span class="time-label afternoon">Afternoon</span>
+              <p class="time-text">Lunch on Ortigia, then drive 40 min to <strong>Pantalica</strong> — UNESCO site, a dramatic limestone gorge with over 5,000 prehistoric rock-cut tombs carved into the cliff faces by the Sicels (pre-Greek indigenous Sicilians) between the 13th and 7th centuries BC. Access via Sortino — drive up to the plateau, park, walk among the upper tombs and visit the <strong>Anaktoron</strong> (Bronze Age palace ruin). Extraordinary views over the honeycomb of tombs in the cliffs below. No serious hiking required — the plateau is accessible by car. Allow 1.5–2 hrs. Optional: descend into the gorge for the Byzantine village and river swim (30–45 min hike each way).</p>
+            </div>
+            <div class="time-block">
+              <span class="time-label evening">Evening</span>
+              <p class="time-text">Return to Ortigia for dinner — <strong>A Putia</strong> (no reservations, arrive at 8pm) for pistachio pasta and pasta alla Norma. Or <strong>Il Tiranno</strong> with Forum views for a special dinner. The Ortigia evening passeggiata along Lungomare di Levante is essential — golden light over the sea, locals strolling, perfect aperitivo atmosphere.</p>
+            </div>
+            <div class="local-note">
+              <div class="local-note-hdr">🏛️ Greek Connection — Ortigia & Neapolis</div>
+              Syracuse at its peak was the most powerful Greek city in the world — it defeated Athens' great military expedition of 415 BC. The theatre here still stages Aeschylus and Sophocles in Greek every summer (INDA Festival, May–July). Walking the same stones as Archimedes, Pindar and Cicero is a profound experience.
+            </div>
+            <div class="local-note">
+              <div class="local-note-hdr">🌊 Optional Alternative — Fontane Bianche</div>
+              If you'd prefer a beach afternoon instead of Pantalica: <strong>Fontane Bianche lido</strong> is 20 min south of Ortigia — white sand, clear water, well organised. A relaxed beach afternoon is a valid alternative on a hot August day. Decide based on energy and preference.
+            </div>
+          </div>
+          <div class="day-side">
+            <div class="side-block">
+              <div class="side-title">In Order of Visit</div>
+              <div class="side-item"><span class="side-icon">🚶</span><span>Ortigia — Piazza del Duomo & Temple of Athena</span></div>
+              <div class="side-item"><span class="side-icon">💧</span><span>Fonte Aretusa</span></div>
+              <div class="side-item"><span class="side-icon">🏛️</span><span>Neapolis — Greek Theatre</span></div>
+              <div class="side-item"><span class="side-icon">🗿</span><span>Ear of Dionysius</span></div>
+              <div class="side-item"><span class="side-icon">🗻</span><span>Pantalica — UNESCO rock tombs</span></div>
+              <div class="side-item"><span class="side-icon">🏖️</span><span>Optional: Fontane Bianche lido</span></div>
+              <div class="side-item"><span class="side-icon">🍝</span><span>A Putia / Il Tiranno — dinner Ortigia</span></div>
+            </div>
+            <div class="side-block">
+              <div class="side-title">Driving</div>
+              <span class="drive-badge">🚗 ~110 min total</span>
+              <p style="font-size:0.78rem;color:var(--stone);margin-top:0.5rem">Ortigia→Neapolis 15 min · →Pantalica 40 min · return 50 min</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 10 -->
+    <div class="day-card" id="day10">
+      <div class="day-header" onclick="toggleDay('day10')">
+        <div class="day-num-col"><div class="day-num">10</div><div class="day-word">Day</div><div class="day-badge">Baroque</div></div>
+        <div class="day-summary">
+          <div class="day-date">Wednesday 5 August 2026</div>
+          <div class="day-title">Noto & Marzamemi</div>
+          <div class="day-quick">
+            <span class="day-quick-item">🏨 Syracuse/Ortigia</span>
+            <span class="day-quick-item">🏖️ Lido Agua — Marzamemi</span>
+            <span class="day-quick-item">🚗 ~95 min driving</span>
+          </div>
+        </div>
+        <div class="day-expand-icon">▾</div>
+      </div>
+      <div class="day-body">
+        <div class="day-body-inner">
+          <div>
+            <div class="time-block">
+              <span class="time-label morning">Morning</span>
+              <p class="time-text">Drive 30 min to <strong>Noto</strong> — the "stone garden." An entire city rebuilt in honey-gold Baroque after the 1693 earthquake. UNESCO. Walk the <strong>Corso Vittorio Emanuele</strong> — one of the great Baroque streets of Europe. Unmissable stop: <strong>Caffè Sicilia</strong> (Corrado Assenza, third-generation maestro pastry chef) for almond granita, jasmine granita, or seasonal fruit sorbet. Unlike anything you'll taste elsewhere. Allow 1.5 hrs in Noto.</p>
+            </div>
+            <div class="time-block">
+              <span class="time-label afternoon">Afternoon</span>
+              <p class="time-text">Drive 20 min to <strong>Marzamemi</strong> — extraordinary tiny tuna-fishing village in the far southeast. <strong>Agua Beach Resort</strong> (Alessandro's contact — reach out ahead for a reservation). Turquoise water over white rocks, beautiful lido setting, the village piazza and ancient tonnara quarter right behind the beach. Afternoon swim and lunch/aperitivo.</p>
+            </div>
+            <div class="time-block">
+              <span class="time-label evening">Evening</span>
+              <p class="time-text">Return to Ortigia (45 min). Last evening in Syracuse — dinner on the island, final <em>granita al pistacchio</em> before bed. Tomorrow is the move to Taormina.</p>
+            </div>
+            <div class="local-note">
+              <div class="local-note-hdr">🇮🇹 Local Insider — Marzamemi</div>
+              Your Italian friend specifically recommended this village. <strong>Agua Beach Resort</strong> is a friend of Alessandro — contact them in advance for the best lido experience. The tonnara quarter of Marzamemi is one of the most atmospheric corners of southeastern Sicily.
+            </div>
+          </div>
+          <div class="day-side">
+            <div class="side-block">
+              <div class="side-title">In Order of Visit</div>
+              <div class="side-item"><span class="side-icon">🏛️</span><span>Noto — Corso Umberto & Duomo</span></div>
+              <div class="side-item"><span class="side-icon">☕</span><span>Caffè Sicilia — granita (Corrado Assenza)</span></div>
+              <div class="side-item"><span class="side-icon">🏖️</span><span>Marzamemi — Lido Agua (afternoon)</span></div>
+              <div class="side-item"><span class="side-icon">🏘️</span><span>Marzamemi village & piazza</span></div>
+            </div>
+            <div class="side-block">
+              <div class="side-title">Driving</div>
+              <span class="drive-badge">🚗 ~95 min total</span>
+              <p style="font-size:0.78rem;color:var(--stone);margin-top:0.5rem">Ortigia→Noto 30 min · →Marzamemi 20 min · →Ortigia 45 min</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="base-change">⬡ Checking out Syracuse — Moving to Base 4 · Catania ⬡</div>
+
+    <!-- DAY 11 -->
+    <div class="day-card" id="day11">
+      <div class="day-header" onclick="toggleDay('day11')">
+        <div class="day-num-col"><div class="day-num">11</div><div class="day-word">Day</div><div class="day-badge">Last day</div></div>
+        <div class="day-summary">
+          <div class="day-date">Thursday 6 August 2026</div>
+          <div class="day-title">Taormina, Savoca, Castelmola → Catania</div>
+          <div class="day-quick">
+            <span class="day-quick-item">🏨 Catania — Le Suites Del Duomo</span>
+            <span class="day-quick-item">🏖️ Isola Bella (optional)</span>
+            <span class="day-quick-item">🚗 ~140 min driving</span>
+          </div>
+        </div>
+        <div class="day-expand-icon">▾</div>
+      </div>
+      <div class="day-body">
+        <div class="day-body-inner">
+          <div>
+            <div class="time-block">
+              <span class="time-label morning">Morning</span>
+              <p class="time-text">Checkout La Casa di Marta in Ortigia. Drive directly to <strong>Taormina</strong> (1hr 20min). <strong>Greek-Roman Theatre</strong> — 3rd century BC, rebuilt by Romans, Etna smoking behind the stage, Ionian Sea glittering below. The most dramatic archaeological site in Sicily — open until 7pm. Walk <strong>Corso Umberto</strong> and the terraced <strong>Villa Comunale</strong> gardens.</p>
+            </div>
+            <div class="time-block">
+              <span class="time-label afternoon">Afternoon</span>
+              <p class="time-text"><strong>Savoca</strong> (20 min from Taormina) — The Godfather village, Bar Vitelli where Michael Corleone met Apollonia, almost unchanged since 1971. <strong>Castelmola</strong> (10 min above Taormina) — ruined castle, panoramic views to Etna and Calabria, vino di mandorla at Bar Turrisi. Optional swim: <strong>Isola Bella</strong> cable car for an hour at the iconic beach below Taormina.</p>
+            </div>
+            <div class="time-block">
+              <span class="time-label evening">Evening</span>
+              <p class="time-text">Drive to <strong>Catania</strong> (45 min from Taormina) via the A18 motorway. Check into <strong>Le Suites Del Duomo</strong> — literally on Piazza del Duomo, 5km from the airport. Evening walk: Piazza del Duomo, <strong>Fontana dell'Elefante</strong> (Catania's symbol), Via Etnea. Dinner in Catania — try <strong>Osteria Antica Marina</strong> for seafood (1 min from hotel) or <strong>A Putia dell'Ostello</strong>. Catania's evening atmosphere is one of the liveliest in Sicily.</p>
+            </div>
+            <div class="local-note">
+              <div class="local-note-hdr">🎭 Taormina Arte Festival</div>
+              World-class concerts and opera performed in the ancient Greek theatre all summer — artists have included Bocelli, Sting, major orchestras. Check <strong>taormina-arte.com</strong> for programme on your date. If a concert lands on your night, consider sleeping in Taormina instead — but be aware you'd need a late drive to Catania the morning of your flight.
+            </div>
+            <div class="local-note">
+              <div class="local-note-hdr">🛏️ Why Catania for the Last Night</div>
+              <strong>Le Suites Del Duomo</strong> sits literally on Piazza del Duomo, 5km from CTA airport. Day 12 morning becomes completely stress-free — no early drive from Taormina, no last-minute panic. Just walk to your car, 10-min drive to airport. Worth giving up the romance of waking up in Taormina for the practical peace of mind.
+            </div>
+          </div>
+          <div class="day-side">
+            <div class="side-block">
+              <div class="side-title">In Order of Visit</div>
+              <div class="side-item"><span class="side-icon">🏛️</span><span>Taormina — Greek-Roman Theatre</span></div>
+              <div class="side-item"><span class="side-icon">🛍️</span><span>Corso Umberto & Villa Comunale</span></div>
+              <div class="side-item"><span class="side-icon">🎬</span><span>Savoca — Bar Vitelli (Godfather)</span></div>
+              <div class="side-item"><span class="side-icon">🏰</span><span>Castelmola — castle & almond wine</span></div>
+              <div class="side-item"><span class="side-icon">🏖️</span><span>Optional: Isola Bella swim</span></div>
+              <div class="side-item"><span class="side-icon">🐘</span><span>Catania — Piazza Duomo & Fontana Elefante</span></div>
+              <div class="side-item"><span class="side-icon">🏨</span><span>Check in Le Suites Del Duomo</span></div>
+              <div class="side-item"><span class="side-icon">🍽️</span><span>Osteria Antica Marina — dinner</span></div>
+            </div>
+            <div class="side-block">
+              <div class="side-title">Driving</div>
+              <span class="drive-badge">🚗 ~140 min total</span>
+              <p style="font-size:0.78rem;color:var(--stone);margin-top:0.5rem">Ortigia→Taormina 80 min · Savoca/Castelmola loop 30 min · Taormina→Catania 45 min</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 12 -->
+    <div class="day-card" id="day12">
+      <div class="day-header" onclick="toggleDay('day12')">
+        <div class="day-num-col"><div class="day-num">12</div><div class="day-word">Day</div><div class="day-badge">Departure</div></div>
+        <div class="day-summary">
+          <div class="day-date">Friday 7 August 2026</div>
+          <div class="day-title">Arrivederci Sicilia — Fly Home</div>
+          <div class="day-quick">
+            <span class="day-quick-item">✈️ CTA → ATH 11:45</span>
+            <span class="day-quick-item">🚗 ~50 min driving</span>
+          </div>
+        </div>
+        <div class="day-expand-icon">▾</div>
+      </div>
+      <div class="day-body">
+        <div class="day-body-inner">
+          <div>
+            <div class="time-block">
+              <span class="time-label morning">Morning</span>
+              <p class="time-text">Wake up at <strong>Le Suites Del Duomo</strong> — you're literally on Piazza del Duomo. Relaxed breakfast. <strong>Optional early start:</strong> walk 1 minute to the <strong>Pescheria fish market</strong> (7–9am) — the most theatrical market in Italy, fishmongers shouting in Sicilian dialect, enormous swordfish and tuna on marble slabs. One last visceral Sicilian experience.</p>
+              <p class="time-text" style="margin-top:0.6rem">Checkout by 9:00am. Drive 10 minutes to <strong>Catania Fontanarossa Airport (CTA)</strong>. <strong>Ecovia drop-off</strong> outside terminal by <strong>09:30</strong> (fill the tank before arrival — full-to-full policy). Check in for <strong>Ryanair FR5105</strong>, depart <strong>11:45 → Athens 14:20</strong>. One final <em>granita al pistacchio con brioche</em> at the airport. Arrivederci, Sicilia.</p>
+            </div>
+            <div class="local-note">
+              <div class="local-note-hdr">🚗 Car Drop-off Reminder</div>
+              Ecovia drop-off is <strong>outside the terminal</strong> at Via S. Giuseppe Alla Rena 4. Phone: +39 095 340 925. Full tank required (full-to-full policy — €25 refuelling charge if returned empty). Take photos of car condition before handing back. Security deposit €700 released after inspection.
+            </div>
+          </div>
+          <div class="day-side">
+            <div class="side-block">
+              <div class="side-title">Departure Timeline</div>
+              <div class="side-item"><span class="side-icon">☕</span><span>Relaxed Catania breakfast on Piazza Duomo</span></div>
+              <div class="side-item"><span class="side-icon">🐟</span><span>Optional: Pescheria fish market 7–9am</span></div>
+              <div class="side-item"><span class="side-icon">🏨</span><span>Checkout Le Suites Del Duomo 9:00am</span></div>
+              <div class="side-item"><span class="side-icon">🚗</span><span>Ecovia drop-off CTA 09:30 (10 min drive)</span></div>
+              <div class="side-item"><span class="side-icon">✈️</span><span>FR5105 departs 11:45</span></div>
+              <div class="side-item"><span class="side-icon">🏠</span><span>Athens landing 14:20</span></div>
+            </div>
+            <div class="side-block">
+              <div class="side-title">Driving</div>
+              <span class="drive-badge">🚗 ~10 min total</span>
+              <p style="font-size:0.78rem;color:var(--stone);margin-top:0.5rem">Catania centre → CTA airport: 10 min. Most stress-free final day imaginable.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end days-list -->
+</div><!-- end section -->
+</div><!-- end tab -->
+
+<!-- ══════════ MAP TAB ══════════ -->
+<div id="tab-map" class="tab-content" style="display:none">
+<div class="map-section">
+<div class="map-wrap">
+  <div class="section-header">
+    <span class="section-tag">Interactive</span>
+    <h2 class="section-title">Daily Routes Map</h2>
+    <div class="section-rule"></div>
+  </div>
+  <svg id="sicily-map" viewBox="0 0 900 560" xmlns="http://www.w3.org/2000/svg">
+    <rect width="900" height="560" fill="#1A3A5C" rx="12"/>
+    <polygon points="120,185 148,158 178,143 212,130 244,120 278,114 312,110 348,112 378,110 408,107 438,110 468,114 498,120 524,124 552,122 574,120 594,122 612,130 626,142 634,154 638,166 630,176 620,186 610,194 602,204 592,216 580,228 568,236 555,244 542,252 530,262 518,272 505,282 492,294 480,306 468,316 456,324 444,332 432,338 420,344 408,348 396,354 384,362 372,372 360,382 350,394 340,406 330,416 320,422 310,428 300,432 290,433 280,431 270,425 262,416 257,406 254,396 252,383 250,371 247,359 242,347 236,336 230,326 222,316 214,306 206,296 198,285 190,273 182,261 174,249 166,237 158,225 147,213 134,200 120,185" fill="#C8B882" stroke="#A89862" stroke-width="1.5"/>
+    <ellipse cx="152" cy="450" rx="52" ry="28" fill="#B8A870" stroke="#A89862" stroke-width="1" opacity="0.5"/>
+    <text x="152" y="455" text-anchor="middle" font-size="9" fill="#6A5830" font-family="DM Sans,sans-serif">Tunisia</text>
+    <ellipse cx="748" cy="118" rx="58" ry="23" fill="#B8A870" stroke="#A89862" stroke-width="1" opacity="0.4"/>
+    <text x="748" y="123" text-anchor="middle" font-size="9" fill="#6A5830" font-family="DM Sans,sans-serif">Calabria</text>
+    <circle cx="610" cy="80" r="4" fill="#C8B882" stroke="#A89862" stroke-width="1"/>
+    <circle cx="628" cy="70" r="3" fill="#C8B882" stroke="#A89862" stroke-width="1"/>
+    <circle cx="644" cy="74" r="5" fill="#C8B882" stroke="#A89862" stroke-width="1"/>
+    <text x="635" y="62" text-anchor="middle" font-size="8" fill="#A8C8E8" font-family="DM Sans,sans-serif">Aeolian Is.</text>
+    <circle cx="88" cy="242" r="5" fill="#C8B882" stroke="#A89862" stroke-width="1.5"/>
+    <circle cx="74" cy="222" r="3" fill="#C8B882" stroke="#A89862" stroke-width="1"/>
+    <circle cx="64" cy="250" r="3" fill="#C8B882" stroke="#A89862" stroke-width="1"/>
+    <text x="66" y="272" text-anchor="middle" font-size="8" fill="#A8D5C2" font-family="DM Sans,sans-serif">Egadi</text>
+    <polygon points="578,192 568,218 588,218" fill="#8B4040" opacity="0.8"/>
+    <text x="594" y="210" font-size="8" fill="#D4A0A0" font-family="DM Sans,sans-serif">Etna🌋</text>
+
+    <!-- DAY ROUTES -->
+    <g id="sr1"><line x1="226" y1="154" x2="254" y2="164" stroke="#7ED4B8" stroke-width="4" stroke-linecap="round"/></g>
+    <g id="sr2"><polyline points="254,164 247,180 254,164" fill="none" stroke="#5AB8A0" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <g id="sr3"><polyline points="254,164 372,150 247,180 254,164" fill="none" stroke="#3D9C84" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <g id="sr4"><polyline points="254,164 182,214 168,194 138,230" fill="none" stroke="#27A96C" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <g id="sr5"><polyline points="138,230 88,242 138,230" fill="none" stroke="#1E8A55" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="5,3"/></g>
+    <g id="sr6"><polyline points="138,230 152,170 138,230" fill="none" stroke="#0D6B3E" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <g id="sr7"><polyline points="138,230 140,285 164,312 138,230" fill="none" stroke="#2A7A5A" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <g id="sr8"><polyline points="138,230 220,320 320,354 342,342 544,350" fill="none" stroke="#E07820" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <g id="sr9"><polyline points="544,350 540,357 530,376 544,350" fill="none" stroke="#9B3FB5" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <g id="sr10"><polyline points="544,350 502,366 518,402 544,350" fill="none" stroke="#7A2E94" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <g id="sr11"><polyline points="544,350 596,252 610,236 605,242 596,252 560,292" fill="none" stroke="#5A1E73" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <g id="sr12"><line x1="560" y1="292" x2="556" y2="310" stroke="#3A1050" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="6,4"/></g>
+
+    <!-- STOP DOTS -->
+    <circle cx="226" cy="154" r="5" fill="#7ED4B8" stroke="#fff" stroke-width="1.5"/>
+    <circle cx="254" cy="164" r="6" fill="#5AB8A0" stroke="#fff" stroke-width="2"/>
+    <circle cx="247" cy="180" r="4" fill="#3D9C84" stroke="#fff" stroke-width="1.5"/>
+    <circle cx="372" cy="150" r="4" fill="#3D9C84" stroke="#fff" stroke-width="1.5"/>
+    <circle cx="182" cy="214" r="4" fill="#27A96C" stroke="#fff" stroke-width="1.5"/>
+    <circle cx="168" cy="194" r="4" fill="#27A96C" stroke="#fff" stroke-width="1.5"/>
+    <circle cx="138" cy="230" r="7" fill="#27A96C" stroke="#fff" stroke-width="2"/>
+    <circle cx="88" cy="242" r="4" fill="#1E8A55" stroke="#fff" stroke-width="1.5"/>
+    <circle cx="152" cy="170" r="4" fill="#0D6B3E" stroke="#fff" stroke-width="1.5"/>
+    <circle cx="140" cy="285" r="4" fill="#2A7A5A" stroke="#fff" stroke-width="1.5"/>
+    <circle cx="164" cy="312" r="4" fill="#2A7A5A" stroke="#fff" stroke-width="1.5"/>
+    <circle cx="220" cy="320" r="4" fill="#E07820" stroke="#fff" stroke-width="1.5"/>
+    <circle cx="320" cy="354" r="4" fill="#E07820" stroke="#fff" stroke-width="1.5"/>
+    <circle cx="342" cy="342" r="4" fill="#E07820" stroke="#fff" stroke-width="1.5"/>
+    <circle cx="544" cy="350" r="7" fill="#9B3FB5" stroke="#fff" stroke-width="2"/>
+    <circle cx="530" cy="376" r="4" fill="#9B3FB5" stroke="#fff" stroke-width="1.5"/>
+    <circle cx="502" cy="366" r="4" fill="#7A2E94" stroke="#fff" stroke-width="1.5"/>
+    <circle cx="518" cy="402" r="4" fill="#7A2E94" stroke="#fff" stroke-width="1.5"/>
+    <circle cx="560" cy="292" r="4" fill="#5A1E73" stroke="#fff" stroke-width="1.5"/>
+    <circle cx="596" cy="252" r="6" fill="#5A1E73" stroke="#fff" stroke-width="2"/>
+    <circle cx="610" cy="236" r="4" fill="#5A1E73" stroke="#fff" stroke-width="1.5"/>
+    <circle cx="556" cy="310" r="5" fill="#3A1050" stroke="#fff" stroke-width="1.5"/>
+
+    <!-- BASE LABELS -->
+    <rect x="228" y="128" width="112" height="32" rx="6" fill="white" stroke="#5AB8A0" stroke-width="2" opacity="0.95"/>
+    <text x="284" y="140" text-anchor="middle" font-size="9.5" font-weight="600" fill="#1A3A2E" font-family="DM Sans,sans-serif">BASE 1 · 27–30 Jul</text>
+    <text x="284" y="153" text-anchor="middle" font-size="8.5" fill="#5A7A6A" font-family="DM Sans,sans-serif">Appart. Maria Al Capo</text>
+    <rect x="90" y="230" width="116" height="32" rx="6" fill="white" stroke="#27A96C" stroke-width="2" opacity="0.95"/>
+    <text x="148" y="242" text-anchor="middle" font-size="9.5" font-weight="600" fill="#1A3A2E" font-family="DM Sans,sans-serif">BASE 2 · 30 Jul–3 Aug</text>
+    <text x="148" y="255" text-anchor="middle" font-size="8.5" fill="#5A7A6A" font-family="DM Sans,sans-serif">Le Mura Charme Rooms</text>
+    <rect x="548" y="330" width="116" height="32" rx="6" fill="white" stroke="#9B3FB5" stroke-width="2" opacity="0.95"/>
+    <text x="606" y="342" text-anchor="middle" font-size="9.5" font-weight="600" fill="#1A3A2E" font-family="DM Sans,sans-serif">BASE 3 · 3–6 Aug</text>
+    <text x="606" y="355" text-anchor="middle" font-size="8.5" fill="#5A7A6A" font-family="DM Sans,sans-serif">La Casa di Marta</text>
+    <rect x="565" y="295" width="115" height="32" rx="6" fill="white" stroke="#5A1E73" stroke-width="2" opacity="0.95"/>
+    <text x="622" y="307" text-anchor="middle" font-size="9.5" font-weight="600" fill="#1A3A2E" font-family="DM Sans,sans-serif">BASE 4 · 6–7 Aug</text>
+    <text x="622" y="320" text-anchor="middle" font-size="8.5" fill="#5A7A6A" font-family="DM Sans,sans-serif">Le Suites Del Duomo</text>
+
+    <!-- CITY LABELS -->
+    <text x="224" y="146" text-anchor="middle" font-size="7.5" fill="#A8D5C2" font-family="DM Sans,sans-serif">PMO</text>
+    <text x="376" y="144" font-size="7.5" fill="#C8B882" font-family="DM Sans,sans-serif">Cefalù</text>
+    <text x="178" y="226" text-anchor="end" font-size="7.5" fill="#C8B882" font-family="DM Sans,sans-serif">Segesta</text>
+    <text x="164" y="188" text-anchor="end" font-size="7.5" fill="#C8B882" font-family="DM Sans,sans-serif">Scopello</text>
+    <text x="82" y="238" text-anchor="end" font-size="7.5" fill="#C8B882" font-family="DM Sans,sans-serif">Favignana</text>
+    <text x="148" y="164" text-anchor="end" font-size="7.5" fill="#C8B882" font-family="DM Sans,sans-serif">S.Vito</text>
+    <text x="136" y="298" text-anchor="end" font-size="7.5" fill="#C8B882" font-family="DM Sans,sans-serif">Marsala</text>
+    <text x="160" y="325" text-anchor="end" font-size="7.5" fill="#C8B882" font-family="DM Sans,sans-serif">Mazara</text>
+    <text x="216" y="334" text-anchor="end" font-size="7.5" fill="#C8B882" font-family="DM Sans,sans-serif">Selinunte</text>
+    <text x="316" y="368" text-anchor="end" font-size="7.5" fill="#C8B882" font-family="DM Sans,sans-serif">Scala Turchi</text>
+    <text x="338" y="336" text-anchor="end" font-size="7.5" fill="#C8B882" font-family="DM Sans,sans-serif">Agrigento</text>
+    <text x="498" y="360" text-anchor="end" font-size="7.5" fill="#C8B882" font-family="DM Sans,sans-serif">Noto</text>
+    <text x="522" y="415" font-size="7.5" fill="#C8B882" font-family="DM Sans,sans-serif">Marzamemi</text>
+    <text x="532" y="370" font-size="7.5" fill="#C8B882" font-family="DM Sans,sans-serif">F.Bianche</text>
+    <text x="564" y="286" font-size="7.5" fill="#C8B882" font-family="DM Sans,sans-serif">Catania</text>
+    <text x="558" y="316" font-size="7.5" fill="#C8B882" font-family="DM Sans,sans-serif">CTA ✈</text>
+    <text x="600" y="248" font-size="7.5" fill="#C8B882" font-family="DM Sans,sans-serif">Taormina</text>
+    <text x="614" y="232" font-size="7.5" fill="#C8B882" font-family="DM Sans,sans-serif">Savoca</text>
+    <text x="244" y="188" font-size="7" fill="#C8B882" font-family="DM Sans,sans-serif">Monreale</text>
+    <text x="246" y="208" font-size="7" fill="#C8B882" font-family="DM Sans,sans-serif">Palermo</text>
+  </svg>
+  <div class="map-legend" id="mapLegend"></div>
+  <div class="map-info" id="mapInfo">Click any day to highlight its route on the map.</div>
+</div>
+</div>
+</div>
+
+<!-- ══════════ HOTELS TAB ══════════ -->
+<div id="tab-hotels" class="tab-content" style="display:none">
+<div class="section">
+  <div class="section-header">
+    <span class="section-tag">Accommodation</span>
+    <h2 class="section-title">Four Strategic Bases</h2>
+    <div class="section-rule"></div>
+  </div>
+  <div class="hotels-grid">
+    <div class="hotel-card">
+      <div class="hotel-num">01</div>
+      <div class="hotel-city">Palermo · Appartamenti Maria Al Capo</div>
+      <div class="hotel-dates">Mon 27 Jul → Thu 30 Jul · 3 nights</div>
+      <div class="hotel-nights">Days 1, 2, 3</div>
+      <div class="hotel-tip">Rated 9.1 · Location 9.4 · Cleanliness 9.5 · Value 9.3. 2 min from Teatro Massimo, Cathedral and Capo Market. Balcony with city views, fully equipped kitchen, AC, soundproofed windows. Host Vincenzo replies within minutes. Check-in: complete ID verification in advance (video call may be required). Parking: ZTL zone — coordinate with Vincenzo for temporary access to drop luggage, then use nearest paid car park. Ask him directly on arrival.</div>
+    </div>
+    <div class="hotel-card">
+      <div class="hotel-num">02</div>
+      <div class="hotel-city">Trapani · Le Mura Charme Rooms</div>
+      <div class="hotel-dates">Thu 30 Jul → Mon 3 Aug · 4 nights</div>
+      <div class="hotel-nights">Days 4, 5, 6, 7</div>
+      <div class="hotel-tip">Rated 9.0 · 9.6 location score for couples. Beautiful palazzo behind the Cathedral in the centro storico, host Marco highly praised for responsiveness and helpfulness. 2 min walk to the sea and the centre, less than 1km to Trapani port (for MareandMore boat tour Day 5 — 5 min walk to 18 Via Ammiraglio Staiti meeting point). Trapani has no formal ZTL — drive to the door to drop luggage, then park at Parking Andros (€15–20/day) or use blue line street parking (free Sundays).</div>
+    </div>
+    <div class="hotel-card">
+      <div class="hotel-num">03</div>
+      <div class="hotel-city">Ortigia · La Casa di Marta</div>
+      <div class="hotel-dates">Mon 3 Aug → Thu 6 Aug · 3 nights</div>
+      <div class="hotel-nights">Days 8, 9, 10</div>
+      <div class="hotel-tip">Rated 9.1 · "un angolo di paradiso" per guests. One-bedroom apartment in the Giudecca quarter of Ortigia island, steps from Piazza del Duomo and Fonte Aretusa. Outstanding host reputation, kitchenette, AC. Check-in from 3pm, checkout 10am. Ask the host to register your plate for ZTL access during weekend hours. Park at Molo Sant'Antonio (€15/day or €50 weekly pass — best for the 3 nights).</div>
+    </div>
+    <div class="hotel-card">
+      <div class="hotel-num">04</div>
+      <div class="hotel-city">Catania · Le Suites Del Duomo</div>
+      <div class="hotel-dates">Thu 6 Aug → Fri 7 Aug · 1 night</div>
+      <div class="hotel-nights">Days 11, 12</div>
+      <div class="hotel-tip">Rated 8.4 · literally opposite Piazza del Duomo, 4km from CTA airport — perfect for the 11:45 flight. Brilliant location for last evening dinner and morning departure with zero stress. Request a room facing away from the square (August nights are lively in Piazza Duomo). Hotel may offer paid parking (first-come) or use Parcheggio Piazza Borsellino at the port. Blue line street parking is free after 8pm — your arrival is well-timed.</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════ FOOD TAB ══════════ -->
+<div id="tab-food" class="tab-content" style="display:none">
+<div class="food-section">
+<div class="section">
+  <div class="section-header">
+    <span class="section-tag">Eat & Drink</span>
+    <h2 class="section-title">What You Must Try</h2>
+    <div class="section-rule"></div>
+  </div>
+  <div class="food-grid">
+    <div class="food-card"><span class="food-emoji">🍧</span><div><span class="food-name">Granita con Brioche</span><span class="food-desc">The Sicilian breakfast. Frozen fruit slush in a soft brioche bun. Try pistachio in Taormina, lemon in Catania, almond in Noto, mulberry in Cefalù. Every morning.</span></div></div>
+    <div class="food-card"><span class="food-emoji">🍪</span><div><span class="food-name">Cannolo Siciliano</span><span class="food-desc">Crispy fried tube filled to order with fresh ricotta. NEVER pre-filled. If the shell looks soft, walk away. Ask for it filled in front of you.</span></div></div>
+    <div class="food-card"><span class="food-emoji">🍚</span><div><span class="food-name">Arancine (Palermo) / Arancini (East)</span><span class="food-desc">Fried rice balls filled with ragù, mozzarella and peas. The great street food debate of Sicily. Buy from a rosticceria, never a tourist restaurant.</span></div></div>
+    <div class="food-card"><span class="food-emoji">🍝</span><div><span class="food-name">Pasta con le Sarde</span><span class="food-desc">Pasta with fresh sardines, wild fennel, pine nuts, raisins and saffron. The definitive Palermo dish — Arab-influenced, gutsy and complex. Bisso Bistrot, Palermo.</span></div></div>
+    <div class="food-card"><span class="food-emoji">🍆</span><div><span class="food-name">Pasta alla Norma</span><span class="food-desc">Pasta with fried aubergine, tomato, ricotta salata and basil. Named after Bellini's opera, invented in Catania. The great vegetarian Sicilian dish.</span></div></div>
+    <div class="food-card"><span class="food-emoji">🥣</span><div><span class="food-name">Couscous al Pesce</span><span class="food-desc">Fish couscous unique to the Trapani area — North African import. Complex broth, saffron-spiced. La Bettolaccia in Trapani is the definitive version.</span></div></div>
+    <div class="food-card"><span class="food-emoji">🦐</span><div><span class="food-name">Gambero Rosso di Mazara</span><span class="food-desc">The world-famous red prawn of Mazara del Vallo. Eat raw as carpaccio or simply grilled at L'Antica Sicilia, Mazara. Some of the finest crustaceans in the Mediterranean.</span></div></div>
+    <div class="food-card"><span class="food-emoji">🍫</span><div><span class="food-name">Cioccolato di Modica</span><span class="food-desc">Cold-processed chocolate using an Aztec technique imported via Spain in the 16th century. Grainy, intense, extraordinary. Dolceria Bonajuto, Modica (est. 1880).</span></div></div>
+    <div class="food-card"><span class="food-emoji">🎂</span><div><span class="food-name">Cassata Siciliana</span><span class="food-desc">Sponge soaked in liqueur, filled with sweetened ricotta, covered in vivid green marzipan icing. Baroque, excessive, extraordinary. An Arab-Norman recipe from the 12th century.</span></div></div>
+    <div class="food-card"><span class="food-emoji">🫙</span><div><span class="food-name">Caponata</span><span class="food-desc">Sweet-and-sour stewed aubergine with olives, capers, celery, vinegar and sugar. Every family has a different recipe. Eaten as antipasto. A masterclass in agrodolce.</span></div></div>
+    <div class="food-card"><span class="food-emoji">🍞</span><div><span class="food-name">Pane ca Meusa</span><span class="food-desc">Palermo's ultimate street food — boiled and fried spleen and lung in a soft roll. Da Rochi at the Vucciria entrance or Nino Ballerino near the Tribunale.</span></div></div>
+    <div class="food-card"><span class="food-emoji">🌿</span><div><span class="food-name">Pistachio Everything</span><span class="food-desc">Bronte pistachios (Etna slopes) — finest in the world. Try pistachio gelato, pesto, cream on brioche, cannoli. Buy jars of crema di pistacchio to take home.</span></div></div>
+    <div class="food-card"><span class="food-emoji">☕</span><div><span class="food-name">Caffè Sicilia — Noto</span><span class="food-desc">Corrado Assenza's legendary pastry shop. Jasmine granita, almond water, seasonal fruit sorbets. A pilgrimage. Corso Vittorio Emanuele 125, Noto.</span></div></div>
+    <div class="food-card"><span class="food-emoji">🍷</span><div><span class="food-name">Etna Rosso — Nerello Mascalese</span><span class="food-desc">Volcanic-soil wine from Etna's slopes, being compared to Burgundy Pinot Noir internationally. Mineral, smoky, high-altitude. Try at Benanti or Passopisciaro.</span></div></div>
+    <div class="food-card"><span class="food-emoji">🍵</span><div><span class="food-name">Vino di Mandorla — Erice</span><span class="food-desc">Sweet almond wine unique to Erice. Try at Bar Turrisi in Castelmola or the pastry shops of Erice. An unusual and distinctly Sicilian experience.</span></div></div>
+    <div class="food-card"><span class="food-emoji">🥐</span><div><span class="food-name">Iris & Sfincione</span><span class="food-desc">Iris: fried brioche filled with ricotta and chocolate — Palermo street classic. Sfincione: thick Sicilian pizza with onion, tomato, anchovies and caciocavallo. Street food essential.</span></div></div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ══════════ GREEK TAB ══════════ -->
+<div id="tab-greek" class="tab-content" style="display:none">
+<div class="greek-section">
+<div class="section">
+  <div class="section-header">
+    <span class="section-tag">Magna Graecia</span>
+    <h2 class="section-title">Sicily's Greek Heritage</h2>
+    <div class="section-rule" style="background:#7AABDC"></div>
+    <p style="color:rgba(255,255,255,0.5);font-family:'Playfair Display',serif;font-style:italic;font-size:1.05rem;margin-top:1rem;max-width:680px">Sicily was the heart of Magna Graecia. More Greeks lived here than in Greece itself at the height of the 5th century BC. These sites will feel like a homecoming.</p>
+  </div>
+  <div class="greek-grid">
+    <div class="greek-card">
+      <div class="greek-card-name">Valley of the Temples</div>
+      <div class="greek-card-city">Agrigento — ancient Akragas · Day 8</div>
+      <p class="greek-card-text">Founded 582 BC by Rhodians and Geloans. Pindar called it "the most beautiful city of mortals." The Temple of Concordia is one of the best-preserved Doric temples in the world — better than most in Greece. Visit at golden hour 4:30pm.</p>
+      <span class="greek-badge">UNESCO · Must Visit · Golden Hour Only</span>
+    </div>
+    <div class="greek-card">
+      <div class="greek-card-name">Neapolis & Ortigia — Syracuse</div>
+      <div class="greek-card-city">Ancient Syracusae · Day 9</div>
+      <p class="greek-card-text">Founded 734 BC by Corinthians. The most powerful Greek city in the world at its peak — it defeated Athens' great expedition of 415 BC. The Greek Theatre still stages Aeschylus and Sophocles in summer. The Duomo was literally built inside the Temple of Athena.</p>
+      <span class="greek-badge">Theatre Still In Use · Temple Inside Church</span>
+    </div>
+    <div class="greek-card">
+      <div class="greek-card-name">Segesta Temple & Theatre</div>
+      <div class="greek-card-city">Calatafimi-Segesta · Day 4</div>
+      <p class="greek-card-text">Built 430–420 BC by the Elymians — indigenous Sicilians who adopted Greek architectural forms without being conquered by Greece. Unfinished, alone in wild hills. More mysterious and haunting than any ruin in Greece itself.</p>
+      <span class="greek-badge">Most Atmospheric · Non-Greek Builders</span>
+    </div>
+    <div class="greek-card">
+      <div class="greek-card-name">Selinunte Archaeological Park</div>
+      <div class="greek-card-city">Ancient Selinus · Day 8</div>
+      <p class="greek-card-text">Founded 628 BC. The largest Greek archaeological site in the world by area. Seven temples across multiple hills. Destroyed 409 BC by Carthage in one of antiquity's most brutal sackings — the ruins are frozen at that moment of destruction.</p>
+      <span class="greek-badge">World's Largest Site · Early Morning Only</span>
+    </div>
+    <div class="greek-card">
+      <div class="greek-card-name">Greek-Roman Theatre — Taormina</div>
+      <div class="greek-card-city">Ancient Tauromenion · Day 11</div>
+      <p class="greek-card-text">Originally built 3rd century BC by Greeks, later rebuilt by Romans. Still used for live performances. The most photographed ancient monument in Sicily — Etna smouldering behind the stage, Ionian Sea below. Afternoon light is exceptional.</p>
+      <span class="greek-badge">Still In Use · Taormina Arte Festival</span>
+    </div>
+    <div class="greek-card">
+      <div class="greek-card-name">Cappella Palatina & Monreale</div>
+      <div class="greek-card-city">Palermo · Days 2 & 3</div>
+      <p class="greek-card-text">The Norman kings brought Greek Byzantine craftsmen from Constantinople to create these extraordinary gold mosaic programmes. The artistic tradition is direct Greek Orthodox inheritance — the same iconography, gold grounds and style as Byzantine churches in Greece, but preserved in completeness never seen elsewhere.</p>
+      <span class="greek-badge">Byzantine Greek Art Tradition</span>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ══════════ TIPS TAB ══════════ -->
+<div id="tab-tips" class="tab-content" style="display:none">
+<div class="section">
+  <div class="section-header">
+    <span class="section-tag">Practical</span>
+    <h2 class="section-title">Essential Tips</h2>
+    <div class="section-rule"></div>
+  </div>
+  <div class="tips-grid">
+    <div class="tip-card"><span class="tip-icon">🚗</span><div class="tip-title">Car Pickup — Day 1 Critical</div><p class="tip-text">Call Ecovia shuttle the moment you land: <strong>+39 091 869 4268</strong>. Wait at "Exit Car Valet" sign front of taxi lane. Must collect by 15:59. Bring physical credit card (no Apple Pay/Google Pay) for €700 deposit. Decline additional CDW — say: "I do not want additional CDW coverage. My booking includes coverage."</p></div>
+    <div class="tip-card"><span class="tip-icon">☀️</span><div class="tip-title">Heat Management</div><p class="tip-text">July/August: 38–42°C. Beach mornings (9am–1pm). Culture afternoons after 4pm. Valley of Temples and Selinunte: never before 4:30pm. Carry 1.5L water minimum. Eat a big lunch, rest 2–4pm.</p></div>
+    <div class="tip-card"><span class="tip-icon">🏖️</span><div class="tip-title">Lido Booking</div><p class="tip-text">Pre-book sunbeds at San Vito Lo Capo, Scala dei Turchi Lounge Beach, Fontane Bianche and Lido Agua Marzamemi. Peak August fills up. Cost: €20–40/day per couple. Always arrive before 9:30am to get the best spot even when pre-booked.</p></div>
+    <div class="tip-card"><span class="tip-icon">🍽️</span><div class="tip-title">Dining Hours</div><p class="tip-text">Lunch 1–3pm. Dinner 8:30–11pm. Restaurants closed 3–7pm. Never eat at places with photos on menus near tourist sites — walk 2 streets back. Aperitivo 6–8pm is essential. Book ahead for La Bettolaccia (Trapani), A Putia (Ortigia), Bell'Assai (Taormina).</p></div>
+    <div class="tip-card"><span class="tip-icon">⛴️</span><div class="tip-title">Favignana Hydrofoil</div><p class="tip-text">Liberty Lines — book tickets in advance online for July/August. First boat ~7am, last return ~20:30. Buy a day return. Rent bikes at the port on arrival (€10–15/day). Island is flat and perfectly bikeable in 30 min.</p></div>
+    <div class="tip-card"><span class="tip-icon">🏰</span><div class="tip-title">Tonnara di Scopello</div><p class="tip-text">Limited daily admissions — arrive before 2pm. Entry ~€10pp. Rocky entry to water — water shoes useful. No sand, but the setting is extraordinary. Village of Scopello above has a small bar for post-swim coffee.</p></div>
+    <div class="tip-card"><span class="tip-icon">🅿️</span><div class="tip-title">Parking & ZTL</div><p class="tip-text">Historic centres (Palermo, Ortigia, Taormina) have ZTL zones — cameras fine automatically. Ask your hotel to register your plate. Use designated car parks. In Taormina use Lumbi or Mazzarò car parks and take the cable car up.</p></div>
+    <div class="tip-card"><span class="tip-icon">💶</span><div class="tip-title">Daily Budget Guide</div><p class="tip-text">Hotel: €100–200/night. Lido: €25–40/day. Lunch: €15–25pp. Dinner: €35–65pp. Hydrofoil to Favignana: €20 return. Valle dei Templi: €14. Selinunte: €6. Neapolis park: €16. Budget ~€180–280/day per couple all-in excluding accommodation.</p></div>
+    <div class="tip-card"><span class="tip-icon">📱</span><div class="tip-title">Booking Checklist</div><p class="tip-text">Book immediately: 1) Ortigia hotel. 2) La Bettolaccia restaurant. 3) Favignana hydrofoil tickets. 4) San Vito Lo Capo lido. 5) Taormina Arte concert (if available). 6) Scala dei Turchi Lounge Beach. 7) Tonnara di Scopello entry. 8) Caffè Sicilia Noto (no booking — just arrive early).</p></div>
+    <div class="tip-card"><span class="tip-icon">🚗</span><div class="tip-title">Day 8 — Leave Trapani 8am</div><p class="tip-text">The heaviest day. Selinunte + Scala dei Turchi + Agrigento + Valle dei Templi + drive to Syracuse. Only works if you're on the road by 8am sharp. Selinunte opens at 8:30 — you want to be there at opening before the heat builds. Do not plan a late checkout from Trapani.</p></div>
+    <div class="tip-card"><span class="tip-icon">🌊</span><div class="tip-title">Zingaro Reserve — Cala dell'Uzzo</div><p class="tip-text">Optional on Day 6 if you want a wilder experience than San Vito. 20 min from San Vito Lo Capo. 20-min hike in — bring water, food, towels. No facilities. Extraordinary protected cove, pristine water. Arrive at Zingaro entrance by 8:30am for parking.</p></div>
+    <div class="tip-card"><span class="tip-icon">✈️</span><div class="tip-title">Day 12 — Car Drop Timing</div><p class="tip-text">Drop Ecovia at CTA by 09:30 (outside terminal). Fill fuel before arriving — full-to-full policy, €25 charge if returned empty. Take photos of car condition. Deposit (€700) released after inspection. Flight FR5105 departs 11:45 — you have comfortable time.</p></div>
+  </div>
+</div>
+</div>
+
+<footer>
+  <div class="footer-logo">SICILIA 2026</div>
+  <p class="footer-sub">27 July – 7 August · Palermo → Trapani → Syracuse → Taormina · Buon Viaggio</p>
+  <p style="margin-top:1rem;font-size:0.65rem;letter-spacing:0.25em;color:rgba(255,255,255,0.2);text-transform:uppercase">V7 1513 · ECO-26126575 · FR 5105</p>
+</footer>
+
+<script>
+// Tab switching
+function showTab(name){
+  document.querySelectorAll('.tab-content').forEach(t=>t.style.display='none');
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+name).style.display='block';
+  event.target.classList.add('active');
+  if(name==='map') initMap();
+}
+
+// Day accordion
+function toggleDay(id){
+  const card=document.getElementById(id);
+  card.classList.toggle('open');
+}
+
+// Map
+let mapInited=false;
+const MDAYS=[
+  {n:1,col:'#7ED4B8',short:'Arrive Palermo',desc:'Land PMO 14:35 → Ecovia car → Palermo base → port/Porta Felice → Vucciria street food. ~30 min driving.'},
+  {n:2,col:'#5AB8A0',short:'Palermo monuments',desc:'Mondello lido morning → Cappella Palatina → La Cuba → Piazza della Vergogna → La Martorana → Cimitero Cappuccini. ~35 min.'},
+  {n:3,col:'#3D9C84',short:'Cefalù + Monreale',desc:'Cefalù Cathedral → Lavatoio → lido → Monreale Cathedral on return. ~130 min.'},
+  {n:4,col:'#27A96C',short:'Segesta + Scopello → Trapani',desc:'Palermo → Segesta Greek temple → Scopello village → Tonnara di Scopello swim → Trapani base. ~120 min.'},
+  {n:5,col:'#1E8A55',short:'Favignana island',desc:'Hydrofoil → Cala Azzurra → Lido Burrone → Tonnara Museum → Erice evening. ~25 min driving.'},
+  {n:6,col:'#0D6B3E',short:'San Vito Lo Capo',desc:'San Vito Lo Capo lido full day. Optional: Cala dell\'Uzzo Zingaro Reserve. ~90 min.'},
+  {n:7,col:'#2A7A5A',short:'Lido Signorino + Marsala + Mazara',desc:'Lido Signorino → Marsala (Punic warship, salt pans) → Mazara del Vallo Arab quarter + gambero rosso. ~115 min.'},
+  {n:8,col:'#E07820',short:'Selinunte + Scala Turchi + Agrigento → Syracuse',desc:'Selinunte ruins → Scala dei Turchi viewpoint → Agrigento old town → Valle dei Templi golden hour → Syracuse. ~170 min.'},
+  {n:9,col:'#9B3FB5',short:'Ortigia + Neapolis + Pantalica',desc:'Ortigia morning walk (Duomo, Fonte Aretusa) → Neapolis Greek Theatre & Ear of Dionysius → Pantalica UNESCO rock tombs (drive-in via Sortino). Optional alternative: Fontane Bianche lido. ~110 min.'},
+  {n:10,col:'#7A2E94',short:'Noto + Marzamemi',desc:'Noto Corso Umberto + Caffè Sicilia → Marzamemi Lido Agua + village. ~95 min.'},
+  {n:11,col:'#5A1E73',short:'Taormina → Catania (Base 4)',desc:'Ortigia checkout → Taormina Greek Theatre + Corso Umberto + Savoca + Castelmola → drive to Catania, check in Le Suites Del Duomo. ~140 min.'},
+  {n:12,col:'#3A1050',short:'Departure CTA',desc:'Wake up in Catania centre. Optional: Pescheria fish market 7-9am (1 min walk). Drop car CTA 09:30 (10 min drive). FR5105 departs 11:45 → Athens 14:20.'},
+];
+
+function initMap(){
+  if(mapInited) return;
+  mapInited=true;
+  const leg=document.getElementById('mapLegend');
+  const info=document.getElementById('mapInfo');
+  let active=null;
+  MDAYS.forEach(d=>{
+    const li=document.createElement('div');
+    li.className='map-leg';
+    li.innerHTML=`<span class="map-leg-dot" style="background:${d.col}"></span><b style="color:rgba(255,255,255,0.85)">D${d.n}</b>&nbsp;${d.short}`;
+    li.addEventListener('click',()=>{
+      const routes=document.querySelectorAll('[id^="sr"]');
+      if(active===d.n){
+        active=null;
+        routes.forEach(r=>r.setAttribute('opacity','1'));
+        document.querySelectorAll('.map-leg').forEach(x=>x.classList.remove('on'));
+        info.innerHTML='Click any day to highlight its route on the map.';
+      } else {
+        active=d.n;
+        routes.forEach(r=>{ r.setAttribute('opacity', r.id==='sr'+d.n?'1':'0.07'); });
+        document.querySelectorAll('.map-leg').forEach(x=>x.classList.remove('on'));
+        li.classList.add('on');
+        info.innerHTML=`<strong>Day ${d.n} — ${d.short}</strong><br>${d.desc}`;
+      }
+    });
+    leg.appendChild(li);
+  });
+}
+
+// Open first day by default
+document.getElementById('day1').classList.add('open');
+</script>
+</body>
+</html>
