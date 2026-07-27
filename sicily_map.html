@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sicily 2026 — Interactive Map</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background:#F4F7F4; height:100vh; display:flex; flex-direction:column; }
+
+header {
+  background:#1A3A2E; color:#A8D5C2; padding:12px 20px;
+  display:flex; align-items:center; justify-content:space-between; flex-shrink:0;
+}
+header h1 { font-size:16px; font-weight:500; letter-spacing:0.05em; }
+header p { font-size:11px; color:rgba(168,213,194,0.6); letter-spacing:0.1em; }
+
+.layout { display:flex; flex:1; overflow:hidden; }
+
+/* SIDEBAR */
+.sidebar {
+  width:240px; flex-shrink:0; background:#fff;
+  border-right:1px solid #E0EBE4; display:flex; flex-direction:column; overflow:hidden;
+}
+.sidebar-head {
+  padding:12px 16px; border-bottom:1px solid #E0EBE4;
+  font-size:11px; font-weight:600; letter-spacing:0.15em; text-transform:uppercase; color:#5BAF92;
+}
+.day-list { flex:1; overflow-y:auto; }
+.day-btn {
+  display:flex; align-items:center; gap:10px; padding:9px 16px;
+  cursor:pointer; border-left:3px solid transparent; transition:background 0.1s;
+  border-bottom:1px solid #F0F5F2;
+}
+.day-btn:hover { background:#F0F9F4; }
+.day-btn.active { border-left-color:var(--c); background:color-mix(in srgb, var(--c) 8%, transparent); }
+.day-dot { width:9px; height:9px; border-radius:50%; background:var(--c); flex-shrink:0; }
+.day-btn-num { font-size:11px; font-weight:600; color:#1A3A2E; }
+.day-btn-label { font-size:11px; color:#6B8A78; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.day-btn-date { font-size:10px; color:#9BB0A4; }
+
+/* BASE LABELS in sidebar */
+.base-label {
+  padding:6px 16px; font-size:10px; letter-spacing:0.15em; text-transform:uppercase;
+  color:#fff; font-weight:600;
+}
+
+/* MAP */
+.map-wrap { flex:1; display:flex; flex-direction:column; }
+#map { flex:1; }
+
+/* INFO PANEL */
+.info-panel {
+  background:#fff; border-top:1px solid #E0EBE4;
+  padding:12px 18px; min-height:70px; flex-shrink:0;
+}
+.info-default { font-size:12px; color:#9BB0A4; padding-top:8px; }
+.info-content { display:flex; gap:12px; align-items:flex-start; }
+.info-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; margin-top:4px; }
+.info-title { font-size:14px; font-weight:600; color:#1A3A2E; margin-bottom:3px; }
+.info-desc { font-size:12px; color:#6B8A78; margin-bottom:6px; line-height:1.5; }
+.info-tags { display:flex; gap:12px; flex-wrap:wrap; }
+.info-tag { font-size:11px; color:#9BB0A4; }
+.info-stops { margin-top:6px; display:flex; flex-wrap:wrap; gap:4px; }
+.stop-pill {
+  font-size:10px; padding:2px 8px; border-radius:20px;
+  background:#F0F9F4; color:#2E7D62; border:1px solid #C8E8D8;
+}
+
+/* Leaflet base label */
+.base-marker {
+  background:#fff; border-radius:8px; padding:3px 8px;
+  font-size:10px; font-weight:600; white-space:nowrap;
+  box-shadow:0 2px 8px rgba(0,0,0,0.15);
+  line-height:1.4;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>SICILIA 2026 — Interactive Route Map</h1>
+    <p>27 JULY – 7 AUGUST · 12 DAYS · 4 BASES</p>
+  </div>
+  <div style="font-size:11px;color:rgba(168,213,194,0.5);text-align:right">
+    <div>V7 1513 · ATH→PMO 27 Jul</div>
+    <div>FR 5105 · CTA→ATH 7 Aug</div>
+  </div>
+</header>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="sidebar-head">Daily Routes</div>
+    <div class="day-list" id="dayList"></div>
+  </div>
+  <div class="map-wrap">
+    <div id="map"></div>
+    <div class="info-panel" id="infoPanel">
+      <div class="info-default">← Click any day to highlight its route and see details</div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+// Wait for DOM
+window.addEventListener('load', function() {
+try {
+const DAYS = [
+  { n:1, date:'Mon 27 Jul', col:'#7ED4B8', label:'Arrive Palermo', drive:'~30 min', beach:'—',
+    desc:'Land PMO 14:35 → Ecovia car (call +39 091 869 4268 on landing) → Palermo base → port & Porta Felice walk → Vucciria & Ballarò street food. Da Rochi or Nino Ballerino for milza.',
+    stops:['PMO Airport','Palermo — port & Porta Felice','Vucciria & Ballarò markets'],
+    coords:[[38.175,13.091],[38.115,13.362]] },
+  { n:2, date:'Tue 28 Jul', col:'#5AB8A0', label:'Palermo monuments', drive:'~35 min', beach:'Mondello lido',
+    desc:'Mondello lido morning → Cappella Palatina & Palazzo Normanni → La Cuba → Piazza della Vergogna → La Martorana → Cimitero Cappuccini ("parte horror") → Ciuri Ciuri (Via Vittorio Emanuele 188) all-you-can-eat Sicilian lunch → Bisso Bistrot / Trattoria Del Massimo dinner.',
+    stops:['Mondello lido','Cappella Palatina & Palazzo Normanni','La Cuba','Piazza della Vergogna','La Martorana','Cimitero Cappuccini','Ciuri Ciuri — Sicilian lunch'],
+    coords:[[38.115,13.362],[38.214,13.347],[38.111,13.351],[38.115,13.362]] },
+  { n:3, date:'Wed 29 Jul', col:'#3D9C84', label:'Cefalù + Monreale', drive:'~130 min', beach:'Cefalù lido',
+    desc:'Drive east to Cefalù (1hr) → Cathedral & Lavatoio Medievale morning → Cefalù lido afternoon → Covo del Pirata dinner → Monreale Cathedral stop on return (closes 5:30pm).',
+    stops:['Cefalù Cathedral & Lavatoio','Cefalù lido','Monreale Cathedral (return stop)'],
+    coords:[[38.115,13.362],[38.039,14.023],[38.082,13.291],[38.115,13.362]] },
+  { n:4, date:'Thu 30 Jul', col:'#27A96C', label:'Segesta + Scopello → Base 2', drive:'~120 min', beach:'Tonnara di Scopello',
+    desc:'Checkout Palermo → Segesta Greek temple & theatre (2hrs, go early) → Scopello village & faraglioni → Tonnara di Scopello swim (~€10pp, arrive before 2pm) → Trapani base. Dinner: La Bettolaccia (couscous al pesce, book ahead).',
+    stops:['Segesta — Greek temple & theatre','Scopello village & faraglioni','Tonnara di Scopello — swim','Trapani — La Bettolaccia'],
+    coords:[[38.115,13.362],[37.940,12.836],[38.045,12.752],[38.017,12.536]] },
+  { n:5, date:'Fri 31 Jul', col:'#1E8A55', label:'Favignana & Levanzo — Boat Tour ✓', drive:'~20 min', beach:'Cala Azzurra + Cala Rossa + Levanzo',
+    desc:'✅ BOOKED: MareandMore Tour (MAR-T131884176) · Depart 10am from 18 Via Ammiraglio Staiti (5 min walk from hotel) · Favignana: Cala Azzurra + Bue Marino + Cala Rossa · Levanzo: Cala Fredda + Cala Minnola · Return 6pm. Evening: Erice cable car & dinner.',
+    stops:['9:30am — MareandMore, 18 Via Ammiraglio Staiti','Favignana — Cala Azzurra','Favignana — Cala Rossa','1:30pm — Favignana town & Tonnara Museum','3:30pm — Levanzo','6pm — return Trapani','Evening — Erice cable car & dinner'],
+    coords:[[38.017,12.536],[37.926,12.324],[37.980,12.280],[38.017,12.536],[38.038,12.586]] },
+  { n:6, date:'Sat 1 Aug', col:'#0D6B3E', label:'San Vito Lo Capo', drive:'~90 min', beach:'San Vito Lo Capo lido',
+    desc:'Drive north to San Vito Lo Capo (45min) → full lido day: 3km white powder sand, Blue Flag, multiple beach clubs. Optional: Cala dell\'Uzzo in Zingaro Reserve (20min from S.Vito, 20min hike in, wild & spectacular). Return to Trapani evening.',
+    stops:['San Vito Lo Capo lido (full day)','Optional: Cala dell\'Uzzo — Zingaro Reserve'],
+    coords:[[38.017,12.536],[38.174,12.730],[38.017,12.536]] },
+  { n:7, date:'Sun 2 Aug', col:'#2A7A5A', label:'Marsala + Mazara del Vallo', drive:'~115 min', beach:'Lido Signorino',
+    desc:'Lido Signorino morning swim (40min from Trapani, organised, calm) → Marsala: Punic warship museum + salt pans & windmills → Mazara del Vallo: Arab quarter walk + gambero rosso lunch at L\'Antica Sicilia.',
+    stops:['Lido Signorino — morning swim','Marsala — Punic warship museum','Marsala — salt pans & windmills','Mazara del Vallo — Arab quarter','L\'Antica Sicilia — gambero rosso'],
+    coords:[[38.017,12.536],[37.855,12.478],[37.798,12.437],[37.654,12.592],[38.017,12.536]] },
+  { n:8, date:'Mon 3 Aug', col:'#E07820', label:'South coast → Base 3', drive:'~170 min', beach:'—',
+    desc:'⚠️ DEPART 8AM SHARP. Selinunte ruins (open 8:30am, go early before heat) → Scala dei Turchi viewpoint & walk (no swim) → Agrigento old town aperitivo → Valle dei Templi golden hour 4:30pm → drive to Syracuse/Ortigia. Check in, late dinner.',
+    stops:['Selinunte — Greek temples (8:30am)','Scala dei Turchi — viewpoint','Agrigento old town — aperitivo','Valle dei Templi — golden hour 4:30pm','Syracuse / Ortigia — check in'],
+    coords:[[38.017,12.536],[37.586,12.835],[37.291,13.505],[37.311,13.576],[37.065,15.293]] },
+  { n:9, date:'Tue 4 Aug', col:'#9B3FB5', label:'Ortigia + Neapolis + Pantalica', drive:'~110 min', beach:'Optional: Fontane Bianche',
+    desc:'Ortigia morning walk on foot (Duomo built inside Temple of Athena — Doric columns visible inside church) → Fonte Aretusa → Neapolis park (Greek Theatre + Ear of Dionysius) → afternoon Pantalica UNESCO rock tombs (drive-in via Sortino, 40 min) → dinner A Putia or Il Tiranno. Optional alternative: Fontane Bianche lido if you prefer a beach afternoon.',
+    stops:['Ortigia — Duomo & Temple of Athena','Fonte Aretusa','Neapolis — Greek Theatre & Ear of Dionysius','Pantalica — UNESCO rock tombs','Optional: Fontane Bianche lido'],
+    coords:[[37.065,15.293],[37.060,15.276],[37.130,15.030],[37.065,15.293]] },
+  { n:10, date:'Wed 5 Aug', col:'#7A2E94', label:'Noto + Marzamemi', drive:'~95 min', beach:'Lido Agua — Marzamemi',
+    desc:'Noto morning (30min from Ortigia): Caffè Sicilia granita by Corrado Assenza + Corso Umberto Baroque walk → Marzamemi: Lido Agua (Alessandro\'s contact, book ahead) + old tonnara village → return Ortigia for last evening.',
+    stops:['Noto — Corso Umberto & Caffè Sicilia','Marzamemi — Lido Agua','Marzamemi — village & tonnara piazza'],
+    coords:[[37.065,15.293],[36.892,15.069],[36.721,15.127],[37.065,15.293]] },
+  { n:11, date:'Thu 6 Aug', col:'#5A1E73', label:'Taormina + Savoca → Catania (Base 4)', drive:'~140 min', beach:'Isola Bella (optional)',
+    desc:'Checkout La Casa di Marta → Taormina Greek-Roman Theatre + Corso Umberto + Villa Comunale → Savoca (Godfather Bar Vitelli) → Castelmola (almond wine, Bar Turrisi) → drive to Catania (45 min), check into Le Suites Del Duomo on Piazza Duomo → evening walk + Fontana Elefante → dinner at Osteria Antica Marina or A Putia dell\'Ostello.',
+    stops:['Taormina — Greek-Roman Theatre','Taormina — Corso Umberto & Villa Comunale','Savoca — Bar Vitelli (Godfather)','Castelmola — castle & Bar Turrisi almond wine','Catania — Piazza Duomo & Fontana Elefante','Le Suites Del Duomo — check in','Osteria Antica Marina — dinner'],
+    coords:[[37.065,15.293],[37.851,15.289],[37.920,15.280],[37.916,15.274],[37.851,15.289],[37.502,15.087]] },
+  { n:12, date:'Fri 7 Aug', col:'#3A1050', label:'Departure → CTA', drive:'~10 min', beach:'—',
+    desc:'Wake up at Le Suites Del Duomo on Piazza Duomo. Relaxed breakfast. Optional: walk 1 min to Catania Pescheria fish market 7-9am. Checkout 9am → drive to CTA airport (10 min). Drop Ecovia car 09:30 outside terminal (fill tank first, full-to-full policy). Ryanair FR5105 departs 11:45 → Athens 14:20.',
+    stops:['Optional: Catania Pescheria fish market 7-9am','Checkout Le Suites Del Duomo','CTA airport — Ecovia drop-off 09:30','Ryanair FR5105 departs 11:45 → Athens'],
+    coords:[[37.502,15.087],[37.467,15.064]] },
+];
+
+const BASES = [
+  { ll:[38.115,13.362], label:'Base 1 · Appartamenti Maria Al Capo', sub:'27–30 Jul · Palermo', col:'#3D9C84' },
+  { ll:[38.017,12.536], label:'Base 2 · Le Mura Charme Rooms', sub:'30 Jul–3 Aug · Trapani', col:'#1E8A55' },
+  { ll:[37.065,15.293], label:'Base 3 · La Casa di Marta', sub:'3–6 Aug · Ortigia', col:'#9B3FB5' },
+  { ll:[37.502,15.087], label:'Base 4 · Le Suites Del Duomo', sub:'6–7 Aug · Catania', col:'#5A1E73' },
+];
+
+const map = L.map('map',{zoomControl:true,scrollWheelZoom:true}).setView([37.8,13.5],8);
+
+// Primary tile layer — OpenStreetMap
+const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+  attribution:'© <a href="https://openstreetmap.org">OpenStreetMap</a>',
+  maxZoom:18
+});
+
+// Fallback tile layer — CartoDB
+const cartoLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{
+  attribution:'© OpenStreetMap © CARTO',
+  subdomains:'abcd', maxZoom:18
+});
+
+// Try OSM first, fall back to CartoDB
+osmLayer.on('tileerror', function(){ cartoLayer.addTo(map); });
+osmLayer.addTo(map);
+
+BASES.forEach(b=>{
+  const icon=L.divIcon({
+    className:'',
+    html:`<div class="base-marker" style="border:2px solid ${b.col};color:${b.col}"><div style="font-weight:600">${b.label}</div><div style="font-size:9px;color:#888;font-weight:400">${b.sub}</div></div>`,
+    iconAnchor:[55,14]
+  });
+  L.marker(b.ll,{icon,zIndexOffset:1000}).addTo(map);
+});
+
+let active=null, layers=[];
+DAYS.forEach(d=>{
+  const poly=L.polyline(d.coords,{
+    color:d.col,weight:4,opacity:0.85,lineCap:'round',lineJoin:'round',
+    dashArray:d.n===12?'7 5':null
+  }).addTo(map);
+  const dots=d.coords.map((c,i)=>{
+    const m=L.circleMarker(c,{
+      radius:i===0||i===d.coords.length-1?6:5,
+      fillColor:d.col,color:'#fff',weight:2,fillOpacity:0.95
+    });
+    const stopName=d.stops[Math.min(i,d.stops.length-1)]||'';
+    m.bindTooltip(`<b>Day ${d.n}</b><br>${stopName}`,{direction:'top',offset:[0,-8]});
+    m.addTo(map);
+    return m;
+  });
+  layers.push({d,poly,dots});
+});
+
+function select(n){
+  const found=layers.find(l=>l.d.n===n);
+  if(!found) return;
+  const d=found.d;
+  if(active===n){
+    active=null;
+    layers.forEach(l=>{l.poly.setStyle({opacity:0.85,weight:4});l.dots.forEach(m=>m.setStyle({fillOpacity:0.95}));});
+    document.querySelectorAll('.day-btn').forEach(b=>b.classList.remove('active'));
+    document.getElementById('infoPanel').innerHTML='<div class="info-default">← Click any day to highlight its route and see details</div>';
+    map.setView([37.8,13.5],8);
+    return;
+  }
+  active=n;
+  layers.forEach(l=>{
+    const me=l.d.n===n;
+    l.poly.setStyle({opacity:me?1:0.07,weight:me?6:2});
+    l.dots.forEach(m=>m.setStyle({fillOpacity:me?1:0.08}));
+  });
+  document.querySelectorAll('.day-btn').forEach(b=>b.classList.remove('active'));
+  const btn=document.querySelector(`.day-btn[data-n="${n}"]`);
+  if(btn){ btn.classList.add('active'); btn.style.setProperty('--c',d.col); }
+  const stops=d.stops.map(s=>`<span class="stop-pill">${s}</span>`).join('');
+  document.getElementById('infoPanel').innerHTML=`
+    <div class="info-content">
+      <div class="info-dot" style="background:${d.col}"></div>
+      <div style="flex:1">
+        <div class="info-title">Day ${d.n} — ${d.date} · ${d.label}</div>
+        <div class="info-desc">${d.desc}</div>
+        <div class="info-tags">
+          <span class="info-tag">🚗 ${d.drive}</span>
+          <span class="info-tag">🏖 ${d.beach}</span>
+        </div>
+        <div class="info-stops">${stops}</div>
+      </div>
+    </div>`;
+  try{ map.fitBounds(L.polyline(d.coords).getBounds().pad(0.3)); }catch(e){}
+}
+
+const list=document.getElementById('dayList');
+DAYS.forEach(d=>{
+  const el=document.createElement('div');
+  el.className='day-btn';
+  el.dataset.n=d.n;
+  el.style.setProperty('--c',d.col);
+  el.innerHTML=`<div class="day-dot" style="background:${d.col}"></div><div style="overflow:hidden"><div class="day-btn-num">Day ${d.n}</div><div class="day-btn-date">${d.date}</div><div class="day-btn-label">${d.label}</div></div>`;
+  el.addEventListener('click',()=>select(d.n));
+  list.appendChild(el);
+});
+
+} catch(err) {
+  document.getElementById('map').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;background:#F4F7F4;color:#2E7D62;flex-direction:column;gap:1rem;padding:2rem;text-align:center"><div style="font-size:2rem">🗺️</div><div style="font-size:14px;font-weight:500">Map failed to load</div><div style="font-size:12px;color:#888">Please open this file in Safari or Chrome with an active internet connection.<br>Error: ' + err.message + '</div></div>';
+  document.getElementById('infoPanel').innerHTML = '<p style="font-size:12px;color:#C96A2A;margin:0">⚠️ Map could not load — check your internet connection and try reopening in Safari.</p>';
+}
+}); // end window.load
+</script>
+</body>
+</html>
